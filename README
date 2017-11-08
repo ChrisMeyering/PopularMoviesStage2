@@ -1,0 +1,3 @@
+In order to install this application:
+    add TMDBApiKey and YoutubeApiKey to gradle.properties in root
+    directory
