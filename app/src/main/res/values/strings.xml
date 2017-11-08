@@ -1,0 +1,60 @@
+<resources>
+    <string name="app_name">Popular Movies 2</string>
+    <string name="error_msg">An error has occurred. Please try again.</string>
+
+
+    <!-- SaveInstanceState Keys -->
+    <string name="SORT_BY_KEY">sort_by_key</string>
+    <string name="PAGE_NUMBER_KEY">page_number_key</string>
+    <string name="MOVIE_INFO_KEY">movie_info_parcelable_key</string>
+    <string name="MOVIE_POSTER_KEY">movie_poster_parcelable_key</string>
+    <!-- Navigation Drawer Menu -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="sort_top_rated">Top Rated</string>
+    <string name="sort_most_popular">Most Popular</string>
+    <string name="action_now_playing">Now Playing</string>
+    <string name="action_upcoming">Upcoming</string>
+    <string name="favorites">Favorites</string>
+    <string name="content_authority">com.example.chris.popularMovies2</string>
+
+
+    <!-- Action Menu -->
+    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
+
+
+
+
+    <!-- Keys -->
+    <string name="query_url_key">QUERY_URL</string>
+    <string name="cv_key_movie_id">MOVIE_ID</string>
+    <string name="cv_key_movie_poster_path">MOVIE_POSTER_PATH</string>
+    <string name="youtube_api_error">Youtube API key not declared</string>
+
+
+    <!-- Descriptions -->
+    <string name="img_desc_left_btn">Previous button</string>
+    <string name="img_desc_right_btn">Next button</string>
+    <string name="img_desc_poster">Image View Poster</string>
+    <string name="img_desc_backdrop">Image View Backdrop</string>
+
+    <!-- Movie Detail -->
+    <string name="tv_genres_base">Genres:</string>
+    <string name="release_date">Release date:</string>
+    <string name="movie_description">Synopsis:</string>
+    <string name="movie_rating">Rating:</string>
+
+
+    <!-- TMDB Query Parameters -->
+    <string name="TMDB_default_url_ext">movie/</string>
+    <string name="TMDB_search_url_ext">search/movie</string>
+    <string name="SORT_BY_RATING">top_rated</string>
+    <string name="SORT_BY_POPULARITY">popular</string>
+    <string name="SORT_NOW_PLAYING">now_playing</string>
+    <string name="SORT_UPCOMING">upcoming</string>
+    <string name="search">Search</string>
+    <string name="movie_reviews">Reviews:</string>
+    <string name="view_trailer">View Trailer</string>
+    <string name="youtube_player_error">Error initializing YouTube player: %s</string>
+</resources>
