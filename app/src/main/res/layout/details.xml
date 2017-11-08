@@ -1,83 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    style="@style/FramedItemLayout"
-    android:padding="12dp">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <android.support.constraint.ConstraintLayout
+        style="@style/FramedItemLayout"
+        android:padding="12dp">
 
-    <ImageView
-        android:id="@+id/iv_movie_poster"
-        android:layout_width="90dp"
-        android:layout_height="0dp"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/img_desc_poster"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintDimensionRatio="H,2:3"
-        app:layout_constraintRight_toLeftOf="@+id/tv_release_date_txt"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ImageView
+            android:id="@+id/iv_movie_poster"
+            android:layout_width="90dp"
+            android:layout_height="0dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="@string/img_desc_poster"
+            android:scaleType="fitCenter"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintDimensionRatio="H,2:3"
+            app:layout_constraintRight_toLeftOf="@+id/tv_release_date_txt"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/pb_loading_poster"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="invisible"
-        app:layout_constraintTop_toTopOf="@id/iv_movie_poster"
-        app:layout_constraintBottom_toBottomOf="@id/iv_movie_poster"
-        app:layout_constraintStart_toStartOf="@id/iv_movie_poster"
-        app:layout_constraintEnd_toEndOf="@id/iv_movie_poster"/>
+        <ProgressBar
+            android:id="@+id/pb_loading_poster"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            app:layout_constraintTop_toTopOf="@id/iv_movie_poster"
+            app:layout_constraintBottom_toBottomOf="@id/iv_movie_poster"
+            app:layout_constraintStart_toStartOf="@id/iv_movie_poster"
+            app:layout_constraintEnd_toEndOf="@id/iv_movie_poster"/>
 
-    <TextView
-        android:id="@+id/tv_release_date_txt"
-        style="@style/DescriptionText.Bold"
-        android:text="@string/release_date"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_release_date"
-        app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
+        <TextView
+            android:id="@+id/tv_release_date_txt"
+            style="@style/DescriptionText.Bold"
+            android:text="@string/release_date"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_release_date"
+            app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
 
-    <TextView
-        android:id="@+id/tv_release_date"
-        style="@style/DescriptionText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_genres"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/tv_release_date_txt"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
-
-
-    <TextView
-        android:id="@+id/tv_genres_txt"
-        style="@style/DescriptionText.Bold"
-        android:text="@string/tv_genres_base"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_genres"
-        app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
+        <TextView
+            android:id="@+id/tv_release_date"
+            style="@style/DescriptionText"
+            app:layout_constraintBottom_toTopOf="@+id/tv_genres"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/tv_release_date_txt"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_chainStyle="packed" />
 
 
-    <TextView
-        android:id="@+id/tv_genres"
-        style="@style/DescriptionText"
-        app:layout_constraintBottom_toTopOf="@+id/tv_rating"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/tv_genres_txt"
-        app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
-
-    <TextView
-        android:id="@+id/tv_rating_txt"
-        style="@style/DescriptionText.Bold"
-        android:text="@string/movie_rating"
-        app:layout_constraintBaseline_toBaselineOf="@+id/tv_rating"
-        app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
-
-    <TextView
-        android:id="@+id/tv_rating"
-        style="@style/DescriptionText"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@id/tv_rating_txt"
-        app:layout_constraintTop_toBottomOf="@+id/tv_genres" />
+        <TextView
+            android:id="@+id/tv_genres_txt"
+            style="@style/DescriptionText.Bold"
+            android:text="@string/tv_genres_base"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_genres"
+            app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
 
 
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/tv_genres"
+            style="@style/DescriptionText"
+            app:layout_constraintBottom_toTopOf="@+id/tv_rating"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/tv_genres_txt"
+            app:layout_constraintTop_toBottomOf="@+id/tv_release_date" />
+
+        <TextView
+            android:id="@+id/tv_rating_txt"
+            style="@style/DescriptionText.Bold"
+            android:text="@string/movie_rating"
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_rating"
+            app:layout_constraintStart_toEndOf="@id/iv_movie_poster" />
+
+        <TextView
+            android:id="@+id/tv_rating"
+            style="@style/DescriptionText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@id/tv_rating_txt"
+            app:layout_constraintTop_toBottomOf="@+id/tv_genres" />
+
+
+    </android.support.constraint.ConstraintLayout>
+</layout>

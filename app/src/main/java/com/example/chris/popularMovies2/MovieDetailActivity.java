@@ -3,75 +3,48 @@ package com.example.chris.popularMovies2;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.constraint.Group;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
+
 import android.os.Bundle;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.MediaController;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
+import com.example.chris.popularMovies2.databinding.ActivityMovieDetailBinding;
 import com.example.chris.popularMovies2.utilities.JSONUtils;
 import com.example.chris.popularMovies2.utilities.MovieInfo;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
-import com.example.chris.popularMovies2.utilities.Utility;
+import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubePlayer;
-import com.google.android.youtube.player.YouTubePlayerView;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class MovieDetailActivity extends YouTubeBaseActivity
         implements LoaderManager.LoaderCallbacks<MovieInfo>,
         YouTubePlayer.OnInitializedListener{
 
-    private static final int YOUTUBE_RECOVERY_REQUEST = 5;
     String TAG = MovieDetailActivity.class.getSimpleName();
 
     private int movieID;
     MovieInfo movieInfo = null;
 
-    @BindView(R.id.btn_trailer) Button btn_trailer;
-    @BindView(R.id.youtube_player) YouTubePlayerView video_player;
-    @BindView(R.id.reviews_layout) View reviews_layout;
-    @BindView(R.id.rv_reviews) RecyclerView rv_reviews;
-    @BindView(R.id.iv_backdrop) ImageView iv_backdrop;
-    @BindView(R.id.tv_movie_title) TextView tv_movie_title;
-    @BindView(R.id.tv_release_date) TextView tv_release_date;
-    @BindView(R.id.iv_movie_poster) ImageView iv_movie_poster;
-    @BindView(R.id.tv_genres) TextView tv_genres;
-    @BindView(R.id.tv_rating) TextView tv_rating;
-    @BindView(R.id.tv_movie_info) TextView tv_movie_info;
+    private ReviewAdapter reviewAdapter;
+    private ActivityMovieDetailBinding movieDetailBinding;
 
-    @BindView(R.id.pb_loading_poster) ProgressBar pb_loading_poster;
-    @BindView(R.id.pb_loading_backdrop) ProgressBar pb_loading_backdrop;
-    @BindView(R.id.pb_loading_details) ProgressBar pb_loading_details;
-    @BindView(R.id.tv_movie_error) TextView tv_display_error;
-    @BindView(R.id.details_group) Group details_group;
-    ReviewAdapter reviewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,17 +53,16 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_movie_detail);
+        movieDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
 
-        ButterKnife.bind(this);
         initRecyclerView();
         Intent start_intent = getIntent();
         if (savedInstanceState != null ) {
             movieInfo = savedInstanceState.getParcelable(getString(R.string.MOVIE_INFO_KEY));
-            displayMovieInfo();
+            bindMovieInfo();
             Log.i(TAG, "Restoring data from savedinstancestate");
         } else if (movieInfo != null) {
-            displayMovieInfo();
+            bindMovieInfo();
         } else if (start_intent != null) {
             if (start_intent.hasExtra("movieID")) {
                 movieID = start_intent.getIntExtra("movieID", -1);
@@ -104,13 +76,13 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
 
     private void initRecyclerView() {
-        rv_reviews.setDrawingCacheEnabled(true);
-        rv_reviews.setNestedScrollingEnabled(false);
+        movieDetailBinding.reviewsLayout.rvReviews.setDrawingCacheEnabled(true);
+        movieDetailBinding.reviewsLayout.rvReviews.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        rv_reviews.setLayoutManager(layoutManager);
+        movieDetailBinding.reviewsLayout.rvReviews.setLayoutManager(layoutManager);
         layoutManager.setAutoMeasureEnabled(true);
         reviewAdapter = new ReviewAdapter(this);
-        rv_reviews.setAdapter(reviewAdapter);
+        movieDetailBinding.reviewsLayout.rvReviews.setAdapter(reviewAdapter);
     }
 
     private void makeMovieQuery() {
@@ -119,20 +91,20 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     }
 
     private  void showProgressBar() {
-        pb_loading_details.setVisibility(View.VISIBLE);
-        details_group.setVisibility(View.INVISIBLE);
+        movieDetailBinding.pbLoadingDetails.setVisibility(View.VISIBLE);
+        movieDetailBinding.detailsGroup.setVisibility(View.INVISIBLE);
     }
 
     private void showMovieInfo() {
-        details_group.setVisibility(View.VISIBLE);
-        tv_display_error.setVisibility(View.INVISIBLE);
-        pb_loading_details.setVisibility(View.INVISIBLE);
+        movieDetailBinding.detailsGroup.setVisibility(View.VISIBLE);
+        movieDetailBinding.tvMovieError.setVisibility(View.INVISIBLE);
+        movieDetailBinding.pbLoadingDetails.setVisibility(View.INVISIBLE);
     }
 
     private void showError() {
-        details_group.setVisibility(View.INVISIBLE);
-        pb_loading_details.setVisibility(View.INVISIBLE);
-        tv_display_error.setVisibility(View.VISIBLE);
+        movieDetailBinding.detailsGroup.setVisibility(View.INVISIBLE);
+        movieDetailBinding.pbLoadingDetails.setVisibility(View.INVISIBLE);
+        movieDetailBinding.tvMovieError.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -167,55 +139,54 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     }
 
     private void showImageProgressBars() {
-        pb_loading_backdrop.setVisibility(View.VISIBLE);
-        pb_loading_poster.setVisibility(View.VISIBLE);
+        movieDetailBinding.pbLoadingBackdrop.setVisibility(View.VISIBLE);
+        movieDetailBinding.detailsLayout.pbLoadingPoster.setVisibility(View.VISIBLE);
     }
 
-    protected void displayMovieInfo() {
+    protected void bindMovieInfo() {
+        movieDetailBinding.tvMovieTitle.setText(movieInfo.getTitle());
+        movieDetailBinding.detailsLayout.tvReleaseDate.setText(movieInfo.getRelease_date());
+        movieDetailBinding.detailsLayout.tvGenres.setText(movieInfo.getGenre_names());
+        movieDetailBinding.detailsLayout.tvRating.setText(String.valueOf(movieInfo.getVote_average()) + "/10");
 
-        tv_movie_title.setText(movieInfo.getTitle());
-        tv_release_date.append(" " + movieInfo.getRelease_date());
-        tv_rating.append(" " + String.valueOf(movieInfo.getVote_average()) + "/10");
-        tv_movie_info.setText(movieInfo.getOverview());
-        tv_genres.append(" " + movieInfo.getGenre_names());
+        movieDetailBinding.synopsisLayout.tvMovieInfo.setText(movieInfo.getOverview());
         reviewAdapter.updateData(movieInfo.getReviews());
-        if (reviewAdapter.getItemCount() > 0)
-            reviews_layout.setVisibility(View.VISIBLE);
-        String[] youtube_key = movieInfo.getTrailers();
-        if (youtube_key != null && youtube_key.length > 0) {
-            video_player.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+        if (reviewAdapter.getItemCount() > 0) {
+            movieDetailBinding.reviewsGroup.setVisibility(View.VISIBLE);
         }
+        String[] youtube_key = movieInfo.getTrailers();
 
+        movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
         showMovieInfo();
         showImageProgressBars();
         Picasso.with(getBaseContext())
-                .load(NetworkUtils.buildPosterURL(movieInfo.getPoster_path(), iv_movie_poster.getWidth()))
+                .load(NetworkUtils.buildPosterURL(movieInfo.getPoster_path(), movieDetailBinding.detailsLayout.ivMoviePoster.getWidth()))
                 .placeholder(R.drawable.poster_placeholder)
                 .error(R.drawable.error)
-                .into(iv_movie_poster, new com.squareup.picasso.Callback() {
+                .into(movieDetailBinding.detailsLayout.ivMoviePoster, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-                        pb_loading_poster.setVisibility(View.INVISIBLE);
+                        movieDetailBinding.detailsLayout.pbLoadingPoster.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
                     public void onError() {
-                        pb_loading_poster.setVisibility(View.INVISIBLE);
+                        movieDetailBinding.detailsLayout.pbLoadingPoster.setVisibility(View.INVISIBLE);
                     }
                 });
         Picasso.with(getBaseContext()).
-                load(NetworkUtils.buildBackdropURL(movieInfo.getBackdrop_path(), iv_backdrop.getWidth()))
+                load(NetworkUtils.buildBackdropURL(movieInfo.getBackdrop_path(), movieDetailBinding.ivBackdrop.getWidth()))
                 .placeholder(R.drawable.backdrop_placeholder)
                 .error(R.drawable.error)
-                .into(iv_backdrop, new com.squareup.picasso.Callback() {
+                .into(movieDetailBinding.ivBackdrop, new com.squareup.picasso.Callback() {
                     @Override
                     public void onSuccess() {
-                        pb_loading_backdrop.setVisibility(View.INVISIBLE);
+                        movieDetailBinding.pbLoadingBackdrop.setVisibility(View.INVISIBLE);
                     }
 
                     @Override
                     public void onError() {
-                        pb_loading_backdrop.setVisibility(View.INVISIBLE);
+                        movieDetailBinding.pbLoadingBackdrop.setVisibility(View.INVISIBLE);
                     }
                 });
     }
@@ -229,26 +200,16 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
     @Override
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-        if (youTubeInitializationResult.isUserRecoverableError()) {
-            youTubeInitializationResult.getErrorDialog(this, YOUTUBE_RECOVERY_REQUEST).show();
-        } else {
-            String error = String.format(getString(R.string.youtube_player_error), youTubeInitializationResult.toString());
-            Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-            video_player.setVisibility(View.INVISIBLE);
-            btn_trailer.setVisibility(View.VISIBLE);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == YOUTUBE_RECOVERY_REQUEST) {
-            video_player.initialize(BuildConfig.YOUTUBE_API_KEY, this);
-        }
+        String error = String.format(getString(R.string.youtube_player_error), youTubeInitializationResult.toString());
+        Toast.makeText(this, error, Toast.LENGTH_LONG).show();
+        movieDetailBinding.btnTrailer.setVisibility(View.VISIBLE);
     }
 
     public void watchTrailer(View view) {
         String trailerKey = "";
+
         if (movieInfo.getTrailers() != null && movieInfo.getTrailers().length > 0) {
+
             trailerKey = movieInfo.getTrailers()[0];
             Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
             try {
@@ -290,7 +251,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
             final Context context = getBaseContext();
             if (movie != null) {
                 movieInfo = movie;
-                displayMovieInfo();
+                bindMovieInfo();
 
 
             } else {
