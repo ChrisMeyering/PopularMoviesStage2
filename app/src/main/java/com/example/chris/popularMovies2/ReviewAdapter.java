@@ -16,6 +16,7 @@ import com.example.chris.popularMovies2.utilities.MovieReview;
 public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewViewHolder> {
     private Context context;
     private MovieReview[] reviews = null;
+
     public ReviewAdapter(Context context) {
         this.context = context;
     }
@@ -40,18 +41,19 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
         else return reviews.length;
     }
 
+    public void updateData(MovieReview[] movieReviews) {
+        reviews = movieReviews;
+        notifyDataSetChanged();
+    }
+
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_author;
         private final TextView tv_review;
+
         public ReviewViewHolder(View itemView) {
             super(itemView);
             tv_author = itemView.findViewById(R.id.tv_review_author);
             tv_review = itemView.findViewById(R.id.tv_review_contents);
         }
-    }
-
-    public void updateData(MovieReview[] movieReviews) {
-        reviews = movieReviews;
-        notifyDataSetChanged();
     }
 }

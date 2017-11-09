@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,33 +36,35 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:gravity="center"
-                app:layout_constraintEnd_toEndOf="@+id/iv_backdrop"
                 app:layout_constraintBottom_toBottomOf="@id/iv_backdrop"
-                app:layout_constraintVertical_bias="0.015"
+                app:layout_constraintEnd_toEndOf="@+id/iv_backdrop"
                 app:layout_constraintStart_toStartOf="@+id/iv_backdrop"
-                app:layout_constraintTop_toTopOf="@+id/iv_backdrop" />
+                app:layout_constraintTop_toTopOf="@+id/iv_backdrop"
+                app:layout_constraintVertical_bias="0.015" />
 
-            <include layout="@layout/details"
+            <include
                 android:id="@+id/details_layout"
+                layout="@layout/details"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toStartOf="@+id/synopsis_layout"
                 app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintTop_toBottomOf="@id/iv_backdrop"
                 app:layout_constraintStart_toStartOf="@id/iv_backdrop"
-                app:layout_constraintEnd_toStartOf="@+id/synopsis_layout"/>
+                app:layout_constraintTop_toBottomOf="@id/iv_backdrop" />
 
-            <include layout="@layout/synopsis"
+            <include
                 android:id="@+id/synopsis_layout"
+                layout="@layout/synopsis"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="16dp"
                 android:layout_marginLeft="8dp"
-                app:layout_constraintHorizontal_weight="2"
+                android:layout_marginTop="16dp"
                 app:layout_constraintBottom_toBottomOf="@id/details_layout"
-                app:layout_constraintTop_toBottomOf="@id/iv_backdrop"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="2"
                 app:layout_constraintStart_toEndOf="@id/details_layout"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@id/iv_backdrop" />
 
             <com.google.android.youtube.player.YouTubePlayerView
                 android:id="@+id/youtube_player"
@@ -70,52 +72,50 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:background="@android:color/black"
-                app:layout_constraintTop_toBottomOf="@id/synopsis_layout"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/synopsis_layout" />
 
 
             <Button
                 android:id="@+id/btn_trailer"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/view_trailer"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/youtube_player"
-                app:layout_constraintBottom_toBottomOf="@id/youtube_player"
-                android:visibility="invisible"
-                app:layout_constraintVertical_bias="0.3"
                 android:onClick="watchTrailer"
-                />
+                android:text="@string/view_trailer"
+                android:visibility="invisible"
+                app:layout_constraintBottom_toBottomOf="@id/youtube_player"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/youtube_player"
+                app:layout_constraintVertical_bias="0.3" />
 
-            <include layout="@layout/reviews"
+            <include
                 android:id="@+id/reviews_layout"
+                layout="@layout/reviews"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/youtube_player"
-                android:visibility="gone"
-                />
+                app:layout_constraintTop_toBottomOf="@id/youtube_player" />
 
             <android.support.constraint.Group
                 android:id="@+id/reviews_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:constraint_referenced_ids="reviews_layout"/>
+                app:constraint_referenced_ids="reviews_layout" />
 
             <ProgressBar
                 android:id="@+id/pb_loading_backdrop"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:visibility="invisible"
-                app:layout_constraintTop_toTopOf="@id/iv_backdrop"
                 app:layout_constraintBottom_toBottomOf="@id/iv_backdrop"
+                app:layout_constraintEnd_toEndOf="@id/iv_backdrop"
                 app:layout_constraintStart_toStartOf="@id/iv_backdrop"
-                app:layout_constraintEnd_toEndOf="@id/iv_backdrop"/>
+                app:layout_constraintTop_toTopOf="@id/iv_backdrop" />
 
             <ProgressBar
                 android:id="@+id/pb_loading_details"
@@ -143,9 +143,9 @@
                 android:id="@+id/details_group"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="invisible"
                 app:constraint_referenced_ids="iv_backdrop, tv_movie_title,
-                details_layout, synopsis_layout"
-                android:visibility="invisible"/>
+                details_layout, synopsis_layout" />
 
         </android.support.constraint.ConstraintLayout>
     </ScrollView>

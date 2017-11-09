@@ -24,8 +24,6 @@
     <string name="action_search">Search</string>
 
 
-
-
     <!-- Keys -->
     <string name="query_url_key">QUERY_URL</string>
     <string name="cv_key_movie_id">MOVIE_ID</string>

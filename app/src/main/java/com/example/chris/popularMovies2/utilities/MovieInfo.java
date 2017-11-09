@@ -8,6 +8,17 @@ import android.os.Parcelable;
  */
 
 public class MovieInfo implements Parcelable {
+    public static final Creator<MovieInfo> CREATOR = new Creator<MovieInfo>() {
+        @Override
+        public MovieInfo createFromParcel(Parcel in) {
+            return new MovieInfo(in);
+        }
+
+        @Override
+        public MovieInfo[] newArray(int size) {
+            return new MovieInfo[size];
+        }
+    };
     private int vote_count = -1;
     private int id = -1;
     private boolean video = false;
@@ -17,7 +28,7 @@ public class MovieInfo implements Parcelable {
     private String poster_path = null;
     private String original_language = "Original language unknown";
     private String original_title = "Original title not provided";
-    private String [] genre_names;
+    private String[] genre_names;
     private String backdrop_path = "Backdrop path undefined";
     private boolean adult = false;
     private String overview = "No description provided.";
@@ -25,7 +36,9 @@ public class MovieInfo implements Parcelable {
     private MovieReview[] reviews = null;
     private String[] trailers;
 
-    protected MovieInfo() {    }
+    protected MovieInfo() {
+    }
+
     protected MovieInfo(Parcel in) {
         vote_count = in.readInt();
         id = in.readInt();
@@ -43,112 +56,126 @@ public class MovieInfo implements Parcelable {
         release_date = in.readString();
     }
 
-    public static final Creator<MovieInfo> CREATOR = new Creator<MovieInfo>() {
-        @Override
-        public MovieInfo createFromParcel(Parcel in) {
-            return new MovieInfo(in);
-        }
+    void setVideo(boolean video) {
+        this.video = video;
+    }
 
-        @Override
-        public MovieInfo[] newArray(int size) {
-            return new MovieInfo[size];
-        }
-    };
+    public int getVote_count() {
+        return vote_count;
+    }
 
     void setVote_count(int vote_count) {
         this.vote_count = vote_count;
     }
-    void setId(int id) {
-        this.id = id;
-    }
-    void setVideo (boolean video) {
-        this.video = video;
-    }
-    void setVote_average(double vote_average) {
-        this.vote_average = vote_average;
-    }
-    void setTitle(String title) {
-        this.title = title;
-    }
-    void setPopularity(long popularity) {
-        this.popularity = popularity;
-    }
-    void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
-    }
-    void setOriginal_language(String original_language) {
-        this.original_language = original_language;
-    }
-    void setOriginal_title(String original_title) {
-        this.original_title = original_title;
-    }
-    void setGenre_names(String[] genre_names) {
-        this.genre_names = genre_names;
-    }
-    void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
-    }
-    void setAdult(boolean adult) {
-        this.adult = adult;
-    }
-    void setOverview(String overview){
-        this.overview = overview;
-    }
-    void setRelease_date(String release_date) {
-        this.release_date = release_date;
-    }
-    void setTrailers(String[] trailer_keys) { this.trailers = trailer_keys;}
-    void setReviews(MovieReview[] reviews) { this.reviews = reviews;}
-    public int getVote_count() {
-        return vote_count;
-    }
+
     public int getId() {
         return id;
     }
+
+    void setId(int id) {
+        this.id = id;
+    }
+
     public boolean hasVideo() {
         return video;
     }
+
     public double getVote_average() {
         return vote_average;
     }
+
+    void setVote_average(double vote_average) {
+        this.vote_average = vote_average;
+    }
+
     public String getTitle() {
         return title;
     }
+
+    void setTitle(String title) {
+        this.title = title;
+    }
+
     public long getPopularity() {
         return popularity;
     }
+
+    void setPopularity(long popularity) {
+        this.popularity = popularity;
+    }
+
     public String getPoster_path() {
         return poster_path;
     }
+
+    void setPoster_path(String poster_path) {
+        this.poster_path = poster_path;
+    }
+
     public String getOriginal_language() {
         return original_language;
     }
+
+    void setOriginal_language(String original_language) {
+        this.original_language = original_language;
+    }
+
     public String getOriginal_title() {
         return original_title;
     }
+
+    void setOriginal_title(String original_title) {
+        this.original_title = original_title;
+    }
+
     public String getGenre_names() {
         String result = "";
-        for (String s :genre_names) {
+        for (String s : genre_names) {
             result += s;
-            if (s == genre_names[genre_names.length -1])
+            if (s == genre_names[genre_names.length - 1])
                 result += ".";
             else
                 result += ", ";
         }
         return result;
     }
-    public String getBackdrop_path(){
+
+    void setGenre_names(String[] genre_names) {
+        this.genre_names = genre_names;
+    }
+
+    public String getBackdrop_path() {
         return backdrop_path;
     }
-    public boolean isAdult(){
+
+    void setBackdrop_path(String backdrop_path) {
+        this.backdrop_path = backdrop_path;
+    }
+
+    public boolean isAdult() {
         return adult;
     }
+
+    void setAdult(boolean adult) {
+        this.adult = adult;
+    }
+
     public String getOverview() {
         return overview;
     }
+
+    void setOverview(String overview) {
+        this.overview = overview;
+    }
+
     public String getRelease_date() {
         return release_date;
     }
+
+    void setRelease_date(String release_date) {
+        this.release_date = release_date;
+    }
+
     public String getInfo() {
         return "id : " + String.valueOf(id) +
                 "\ntitle : " + title +
@@ -162,8 +189,17 @@ public class MovieInfo implements Parcelable {
     public String[] getTrailers() {
         return trailers;
     }
+
+    void setTrailers(String[] trailer_keys) {
+        this.trailers = trailer_keys;
+    }
+
     public MovieReview[] getReviews() {
         return reviews;
+    }
+
+    void setReviews(MovieReview[] reviews) {
+        this.reviews = reviews;
     }
 
     @Override

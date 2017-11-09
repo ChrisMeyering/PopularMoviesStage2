@@ -21,6 +21,7 @@ import java.net.URL;
 
 public class MoviesSyncTask {
     private static String TAG = MoviesSyncTask.class.getSimpleName();
+
     synchronized public static void syncMovies(Context context, String urlString) {
         try {
             URL movieRequestURL = new URL(urlString);
@@ -41,7 +42,7 @@ public class MoviesSyncTask {
         } catch (IOException e) {
             Log.i(TAG + " -- QUERY", "Unable to query url " + urlString);
             e.printStackTrace();
-        } catch (JSONException e ){
+        } catch (JSONException e) {
             Log.i(TAG + " -- JSON", "Error creating contentValues");
         }
     }

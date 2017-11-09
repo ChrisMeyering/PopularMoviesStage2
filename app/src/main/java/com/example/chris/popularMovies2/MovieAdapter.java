@@ -11,7 +11,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
-import com.example.chris.popularMovies2.data.MoviesContract;
 import com.example.chris.popularMovies2.utilities.MoviePoster;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
 import com.example.chris.popularMovies2.utilities.Utility;
@@ -19,7 +18,6 @@ import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by chris on 9/27/17.

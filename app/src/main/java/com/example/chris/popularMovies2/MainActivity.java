@@ -1,52 +1,44 @@
 package com.example.chris.popularMovies2;
 
 import android.annotation.SuppressLint;
-import android.content.ContentProvider;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
-import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chris.popularMovies2.data.MoviesContract;
 import com.example.chris.popularMovies2.sync.MoviesSyncUtils;
-import com.example.chris.popularMovies2.utilities.JSONUtils;
 import com.example.chris.popularMovies2.utilities.MoviePoster;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
 import com.example.chris.popularMovies2.utilities.Utility;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,13 +46,12 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>,
         NavigationView.OnNavigationItemSelectedListener,
-        MovieAdapter.MovieAdapterClickHandler
-{
+        MovieAdapter.MovieAdapterClickHandler {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int CURRENT_MOVIE_LOADER_ID = 11;
-    private static final int FAVORITES_MOVIE_LOADER_ID= 12;
-    private static final int RECENT_MOVIE_LOADER_ID= 13;
+    private static final int FAVORITES_MOVIE_LOADER_ID = 12;
+    private static final int RECENT_MOVIE_LOADER_ID = 13;
 
     private static final String SORT_BY_RATING = "top_rated";
     private static final String SORT_BY_POPULARITY = "popular";
@@ -68,10 +59,6 @@ public class MainActivity extends AppCompatActivity
     private static final String SORT_UPCOMING = "upcoming";
     private static final String SORT_FAVORITES = "favorites";
     private static final String SORT_RECENT = "recent";
-    private ArrayList<Integer> favorite_ids = new ArrayList<Integer>();
-    private int page_number = 1;
-    private String sort_by = SORT_BY_RATING;
-
     @BindView(R.id.rv_movie_posters)
     RecyclerView rv_movies;
     @BindView(R.id.tv_page_num)
@@ -84,7 +71,9 @@ public class MainActivity extends AppCompatActivity
     DrawerLayout drawerLayout;
     @BindView(R.id.et_search_by_name)
     EditText et_search_by_name;
-
+    private ArrayList<Integer> favorite_ids = new ArrayList<Integer>();
+    private int page_number = 1;
+    private String sort_by = SORT_BY_RATING;
     private MovieAdapter movieAdapter;
     private NetworkUtils networkUtils = new NetworkUtils();
 
@@ -92,9 +81,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        this.getContentResolver().delete(MoviesContract.CurrentPageEntry.CONTENT_URI,null,null);
+        this.getContentResolver().delete(MoviesContract.CurrentPageEntry.CONTENT_URI, null, null);
 
-        if(savedInstanceState != null) {
+        if (savedInstanceState != null) {
             sort_by = savedInstanceState.getString(getString(R.string.SORT_BY_KEY));
             page_number = savedInstanceState.getInt(getString(R.string.PAGE_NUMBER_KEY));
         }
@@ -108,6 +97,7 @@ public class MainActivity extends AppCompatActivity
         //MovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_default_url_ext), sort_by, null, page_number));
 
     }
+
     private void setupSharedPreferences() {
         // Get all of the values from shared preferences to set it up
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -168,7 +158,7 @@ public class MainActivity extends AppCompatActivity
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
                     String search = et_search_by_name.getText().toString();
-                    if (search.trim().length() > 0){
+                    if (search.trim().length() > 0) {
                         sort_by = "";
                         page_number = 1;
                         updatePageNumberTV();
@@ -230,7 +220,7 @@ public class MainActivity extends AppCompatActivity
         if (loader == null) {
             loaderManager.initLoader(FAVORITES_MOVIE_LOADER_ID, null, this);
         } else {
-            loaderManager.restartLoader(FAVORITES_MOVIE_LOADER_ID,null,this);
+            loaderManager.restartLoader(FAVORITES_MOVIE_LOADER_ID, null, this);
         }
     }
 
@@ -254,7 +244,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         hideKeyboard();
@@ -264,14 +253,14 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_search:
                 String search = et_search_by_name.getText().toString();
-                if(search.trim().length() == 0) {
+                if (search.trim().length() == 0) {
                     Toast.makeText(this, "Please enter a movie name.", Toast.LENGTH_SHORT).show();
                     return super.onOptionsItemSelected(item);
                 }
                 page_number = 1;
                 sort_by = "";
                 updatePageNumberTV();
-                makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search,page_number));
+                makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, page_number));
                 et_search_by_name.clearComposingText();
                 findViewById(R.id.page_group).setVisibility(View.VISIBLE);
                 return true;
@@ -360,20 +349,20 @@ public class MainActivity extends AppCompatActivity
             case CURRENT_MOVIE_LOADER_ID:
                 queryUri = MoviesContract.CurrentPageEntry.CONTENT_URI;
                 sortOrder = MoviesContract.CurrentPageEntry._ID + " ASC";
-                projection = new String[] {MoviesContract.CurrentPageEntry.COLUMN_MOVIE_ID,
+                projection = new String[]{MoviesContract.CurrentPageEntry.COLUMN_MOVIE_ID,
                         MoviesContract.CurrentPageEntry.COLUMN_POSTER_PATH};
                 break;
             case FAVORITES_MOVIE_LOADER_ID:
 
                 queryUri = MoviesContract.FavoritesEntry.CONTENT_URI;
                 sortOrder = MoviesContract.FavoritesEntry._ID + " ASC";
-                projection = new String[] {MoviesContract.FavoritesEntry.COLUMN_MOVIE_ID,
+                projection = new String[]{MoviesContract.FavoritesEntry.COLUMN_MOVIE_ID,
                         MoviesContract.FavoritesEntry.COLUMN_POSTER_PATH};
                 break;
             case RECENT_MOVIE_LOADER_ID:
                 queryUri = MoviesContract.RecentEntry.CONTENT_URI;
                 sortOrder = MoviesContract.RecentEntry._ID + " ASC";
-                projection = new String[] {MoviesContract.RecentEntry.COLUMN_MOVIE_ID,
+                projection = new String[]{MoviesContract.RecentEntry.COLUMN_MOVIE_ID,
                         MoviesContract.RecentEntry.COLUMN_POSTER_PATH};
                 break;
             default:
@@ -442,7 +431,7 @@ public class MainActivity extends AppCompatActivity
                     break;
                 case FAVORITES_MOVIE_LOADER_ID:
                     favorite_ids.clear();
-                    for (data.moveToFirst(); !data.isAfterLast();data.moveToNext() ) {
+                    for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                         favorite_ids.add(data.getInt(0));
                     }
                     Log.i(TAG, "updated favorite ids");
@@ -458,7 +447,7 @@ public class MainActivity extends AppCompatActivity
             showMoviePosters();
             movieAdapter.swapCursor(data);
 
-                    //setMoviePosters(posters);
+            //setMoviePosters(posters);
         } else {
             showError();
         }
@@ -483,8 +472,6 @@ public class MainActivity extends AppCompatActivity
     }
 
 
-
-
     public void nextPage(View view) {
         page_number++;
         updatePageNumberTV();
@@ -503,7 +490,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-
     private boolean isFavorite(int movie_id) {
         for (int id : favorite_ids) {
             if (movie_id == id)
@@ -516,14 +502,14 @@ public class MainActivity extends AppCompatActivity
     public void onClick(View view, MoviePoster movie) {
         hideKeyboard();
         int id = view.getId();
-        switch(id) {
+        switch (id) {
             case R.id.iv_poster:
                 Intent intent = new Intent(this, MovieDetailActivity.class);
                 intent.putExtra("movieID", movie.getId());
                 startActivity(intent);
                 break;
             case R.id.ib_favorite:
-                if (isFavorite(movie.getId())){
+                if (isFavorite(movie.getId())) {
                     movie.deleteFromFavorites(this);
                 } else {
                     movie.saveToFavorites(this);

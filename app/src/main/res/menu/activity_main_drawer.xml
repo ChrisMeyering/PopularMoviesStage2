@@ -5,19 +5,19 @@
         <item
             android:id="@+id/action_sort_rating"
             android:icon="@drawable/leaderboard_icon_50"
-            android:title="@string/sort_top_rated"/>
+            android:title="@string/sort_top_rated" />
         <item
             android:id="@+id/action_sort_pop"
             android:icon="@drawable/ic_favorite_grey_24dp"
-            android:title="@string/sort_most_popular"/>
+            android:title="@string/sort_most_popular" />
         <item
             android:id="@+id/action_now_playing"
             android:icon="@drawable/ic_access_time_grey_24dp"
-            android:title="@string/action_now_playing"/>
+            android:title="@string/action_now_playing" />
         <item
             android:id="@+id/action_upcoming"
             android:icon="@drawable/ic_date_range_grey_24dp"
-            android:title="@string/action_upcoming"/>
+            android:title="@string/action_upcoming" />
         <item
             android:id="@+id/action_view_favorites"
             android:icon="@android:drawable/btn_star_big_off"

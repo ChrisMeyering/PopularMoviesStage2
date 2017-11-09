@@ -38,40 +38,8 @@ public class NetworkUtils {
 
 
     private static Uri.Builder previousQueryBuilder;
-    public void NetworkUtils() {
-        previousQueryBuilder = null;
-    }
 
-
-    public URL buildSearchURL(@NonNull String baseExtension, @Nullable String sort_by, @Nullable String movieName, int pageNumber){
-        Uri.Builder uriBuilder = null;
-        String base = TMDB_BASE_URL + baseExtension;
-        if ((movieName == null) == (sort_by == null)) {
-            throw new IllegalArgumentException("Unable to build requested URL");
-        } else if (sort_by != null) {
-            uriBuilder = Uri.parse(base + sort_by).buildUpon();
-        } else {
-            uriBuilder = Uri.parse(base).buildUpon()
-                    .appendQueryParameter(PARAM_QUERY, movieName);
-        }
-        uriBuilder = uriBuilder.appendQueryParameter(PARAM_API_KEY, TMDB_API_KEY);
-        previousQueryBuilder = uriBuilder;
-        return buildPageURL(pageNumber);
-    }
-
-    public URL buildPageURL(int pageNumber){
-
-        Uri builtUri = previousQueryBuilder.appendQueryParameter(PARAM_PAGE_NUMBER, String.valueOf(pageNumber))
-                .build();
-        URL url = null;
-        try {
-            url = new URL(builtUri.toString());
-        } catch (MalformedURLException e) {
-            LogUtils.logError(TAG, e);
-        }
-        return url;
-    }
-    public static Uri buildYoutubeUri (String video_key) {
+    public static Uri buildYoutubeUri(String video_key) {
         return Uri.parse(YOUTUBE_BASE_URL).buildUpon()
                 .appendQueryParameter(PARAM_YOUTUBE_QUERY_KEY, video_key)
                 .build();
@@ -133,13 +101,46 @@ public class NetworkUtils {
             InputStream in = urlConnection.getInputStream();
             Scanner scanner = new Scanner(in);
             scanner.useDelimiter("\\A");
-            if(scanner.hasNext())
+            if (scanner.hasNext())
                 return scanner.next();
             else
                 return null;
         } finally {
             urlConnection.disconnect();
         }
+    }
+
+    public void NetworkUtils() {
+        previousQueryBuilder = null;
+    }
+
+    public URL buildSearchURL(@NonNull String baseExtension, @Nullable String sort_by, @Nullable String movieName, int pageNumber) {
+        Uri.Builder uriBuilder = null;
+        String base = TMDB_BASE_URL + baseExtension;
+        if ((movieName == null) == (sort_by == null)) {
+            throw new IllegalArgumentException("Unable to build requested URL");
+        } else if (sort_by != null) {
+            uriBuilder = Uri.parse(base + sort_by).buildUpon();
+        } else {
+            uriBuilder = Uri.parse(base).buildUpon()
+                    .appendQueryParameter(PARAM_QUERY, movieName);
+        }
+        uriBuilder = uriBuilder.appendQueryParameter(PARAM_API_KEY, TMDB_API_KEY);
+        previousQueryBuilder = uriBuilder;
+        return buildPageURL(pageNumber);
+    }
+
+    public URL buildPageURL(int pageNumber) {
+
+        Uri builtUri = previousQueryBuilder.appendQueryParameter(PARAM_PAGE_NUMBER, String.valueOf(pageNumber))
+                .build();
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            LogUtils.logError(TAG, e);
+        }
+        return url;
     }
 
 

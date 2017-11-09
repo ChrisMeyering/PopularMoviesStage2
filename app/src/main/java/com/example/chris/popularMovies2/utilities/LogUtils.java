@@ -7,7 +7,7 @@ import android.util.Log;
  */
 
 public class LogUtils {
-    public static void logError (String Tag, Exception e) {
+    public static void logError(String Tag, Exception e) {
         Log.d(Tag, e.getMessage());
         e.printStackTrace();
     }

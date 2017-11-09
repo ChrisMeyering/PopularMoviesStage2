@@ -8,14 +8,14 @@ import android.util.DisplayMetrics;
  */
 
 public class Utility {
-    public static int numOfGridColumns (Context context) {
+    public static int numOfGridColumns(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        return Math.max((int) (dpWidth/160), 3);
+        return Math.max((int) (dpWidth / 160), 3);
     }
 
     public static int getMaxGridCellWidth(Context context) {
         DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        return (int) (displayMetrics.widthPixels/numOfGridColumns(context)* 0.75);
+        return (int) (displayMetrics.widthPixels / numOfGridColumns(context) * 0.75);
     }
 }

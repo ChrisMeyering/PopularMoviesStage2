@@ -13,17 +13,17 @@
         android:id="@+id/imageView"
         android:layout_width="90dp"
         android:layout_height="90dp"
+        android:layout_marginTop="12dp"
         android:adjustViewBounds="true"
         android:padding="12dp"
-        android:layout_marginTop="12dp"
         app:srcCompat="@drawable/powered_by_square_tmdb_green" />
 
     <TextView
+        style="@style/ShadowedText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/app_name"
         android:padding="8dp"
-        style="@style/ShadowedText"
+        android:text="@string/app_name"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 </LinearLayout>

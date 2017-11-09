@@ -8,7 +8,7 @@ public class MovieReview {
     String review;
     String author;
 
-    public MovieReview(String author,String review) {
+    public MovieReview(String author, String review) {
         this.review = review;
         this.author = author;
     }
@@ -16,6 +16,7 @@ public class MovieReview {
     public String getAuthor() {
         return author;
     }
+
     public String getReview() {
         return review;
     }

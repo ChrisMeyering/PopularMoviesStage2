@@ -27,7 +27,7 @@
         <provider
             android:name=".data.MoviesProvider"
             android:authorities="@string/content_authority"
-            android:exported="false"/>
+            android:exported="false" />
 
         <service
             android:name=".sync.MoviesSyncIntentService"

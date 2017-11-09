@@ -1,6 +1,5 @@
 package com.example.chris.popularMovies2.utilities;
 
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
@@ -8,7 +7,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.widget.ImageView;
 
-import com.example.chris.popularMovies2.MainActivity;
 import com.example.chris.popularMovies2.data.MoviesContract;
 
 /**
@@ -16,6 +14,17 @@ import com.example.chris.popularMovies2.data.MoviesContract;
  */
 
 public class MoviePoster implements Parcelable {
+    public static final Creator<MoviePoster> CREATOR = new Creator<MoviePoster>() {
+        @Override
+        public MoviePoster createFromParcel(Parcel in) {
+            return new MoviePoster(in);
+        }
+
+        @Override
+        public MoviePoster[] newArray(int size) {
+            return new MoviePoster[size];
+        }
+    };
     private final int id;
     private final String poster_path;
     ImageView poster_image;
@@ -30,21 +39,10 @@ public class MoviePoster implements Parcelable {
         poster_path = in.readString();
     }
 
-    public static final Creator<MoviePoster> CREATOR = new Creator<MoviePoster>() {
-        @Override
-        public MoviePoster createFromParcel(Parcel in) {
-            return new MoviePoster(in);
-        }
-
-        @Override
-        public MoviePoster[] newArray(int size) {
-            return new MoviePoster[size];
-        }
-    };
-
-    public void setPoster_image (ImageView image) {
+    public void setPoster_image(ImageView image) {
         poster_image = image;
     }
+
     public int getId() {
         return id;
     }
@@ -60,7 +58,7 @@ public class MoviePoster implements Parcelable {
         Uri uri = MoviesContract.FavoritesEntry.CONTENT_URI.buildUpon()
                 .appendPath(String.valueOf(id))
                 .build();
-        context.getContentResolver().delete(uri,null,null );
+        context.getContentResolver().delete(uri, null, null);
     }
 
     public void saveToRecents(Context context) {

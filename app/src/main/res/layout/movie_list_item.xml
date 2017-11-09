@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="3dp"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="3dp">
 
     <ImageView
         android:id="@+id/iv_poster"
-        android:layout_gravity="center"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_centerInParent="true"
+        android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:scaleType="fitCenter"
         android:contentDescription="@string/img_desc_poster"
-        app:layout_constraintDimensionRatio="H,6:9"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:foreground="@drawable/movie_list_item_selector"
-        />
+        android:scaleType="fitCenter"
+        app:layout_constraintDimensionRatio="H,6:9"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/pb_loading_poster"
@@ -28,21 +26,20 @@
         android:layout_height="50dp"
         android:layout_centerInParent="true"
         android:elevation="4dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="invisible"/>
-    
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageButton
         android:id="@+id/ib_favorite"
         android:layout_width="28dp"
         android:layout_height="28dp"
         android:layout_margin="8dp"
-        android:padding="2dp"
-        android:elevation="4dp"
         android:background="@drawable/favorite_icon_selector"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:elevation="4dp"
+        android:padding="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintEnd_toEndOf="parent" />
 </android.support.constraint.ConstraintLayout>

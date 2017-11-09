@@ -2,24 +2,17 @@ package com.example.chris.popularMovies2.utilities;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.os.Parcel;
 import android.util.Log;
 
-import com.example.chris.popularMovies2.R;
 import com.example.chris.popularMovies2.data.MoviesContract;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by chris on 9/26/17.
  */
-
-
 
 
 public class JSONUtils {
@@ -92,12 +85,11 @@ public class JSONUtils {
     }
 
 
-
-    public static ContentValues[] getPosterContentValuesFromJSON(Context context, String jsonQueryResponse) throws JSONException{
+    public static ContentValues[] getPosterContentValuesFromJSON(Context context, String jsonQueryResponse) throws JSONException {
         JSONObject moviesJSON = new JSONObject(jsonQueryResponse);
         JSONArray jsonMoviesArray = moviesJSON.getJSONArray(RESULTS);
         ContentValues[] contentValues = new ContentValues[jsonMoviesArray.length()];
-        for (int i =0; i < jsonMoviesArray.length(); i++){
+        for (int i = 0; i < jsonMoviesArray.length(); i++) {
             JSONObject movieJSON = jsonMoviesArray.getJSONObject(i);
             ContentValues posterValues = new ContentValues();
             posterValues.put(MoviesContract.CurrentPageEntry.COLUMN_MOVIE_ID, movieJSON.getInt(MOV_ID));

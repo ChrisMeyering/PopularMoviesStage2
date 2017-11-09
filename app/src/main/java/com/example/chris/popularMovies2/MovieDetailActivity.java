@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
-
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -23,10 +22,8 @@ import com.example.chris.popularMovies2.databinding.ActivityMovieDetailBinding;
 import com.example.chris.popularMovies2.utilities.JSONUtils;
 import com.example.chris.popularMovies2.utilities.MovieInfo;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
-import com.google.android.youtube.player.YouTubeApiServiceUtil;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
-import com.google.android.youtube.player.YouTubeIntents;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.squareup.picasso.Picasso;
 
@@ -35,13 +32,11 @@ import java.net.URL;
 
 public class MovieDetailActivity extends YouTubeBaseActivity
         implements LoaderManager.LoaderCallbacks<MovieInfo>,
-        YouTubePlayer.OnInitializedListener{
+        YouTubePlayer.OnInitializedListener {
 
     String TAG = MovieDetailActivity.class.getSimpleName();
-
-    private int movieID;
     MovieInfo movieInfo = null;
-
+    private int movieID;
     private ReviewAdapter reviewAdapter;
     private ActivityMovieDetailBinding movieDetailBinding;
 
@@ -57,7 +52,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
         initRecyclerView();
         Intent start_intent = getIntent();
-        if (savedInstanceState != null ) {
+        if (savedInstanceState != null) {
             movieInfo = savedInstanceState.getParcelable(getString(R.string.MOVIE_INFO_KEY));
             bindMovieInfo();
             Log.i(TAG, "Restoring data from savedinstancestate");
@@ -90,7 +85,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         new MovieQueryTask().execute(url);
     }
 
-    private  void showProgressBar() {
+    private void showProgressBar() {
         movieDetailBinding.pbLoadingDetails.setVisibility(View.VISIBLE);
         movieDetailBinding.detailsGroup.setVisibility(View.INVISIBLE);
     }
@@ -148,14 +143,11 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         movieDetailBinding.detailsLayout.tvReleaseDate.setText(movieInfo.getRelease_date());
         movieDetailBinding.detailsLayout.tvGenres.setText(movieInfo.getGenre_names());
         movieDetailBinding.detailsLayout.tvRating.setText(String.valueOf(movieInfo.getVote_average()) + "/10");
-
         movieDetailBinding.synopsisLayout.tvMovieInfo.setText(movieInfo.getOverview());
         reviewAdapter.updateData(movieInfo.getReviews());
         if (reviewAdapter.getItemCount() > 0) {
             movieDetailBinding.reviewsGroup.setVisibility(View.VISIBLE);
         }
-        String[] youtube_key = movieInfo.getTrailers();
-
         movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
         showMovieInfo();
         showImageProgressBars();

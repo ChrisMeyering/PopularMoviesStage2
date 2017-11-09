@@ -48,41 +48,40 @@
         android:background="@drawable/btn_prev"
         android:contentDescription="@string/img_desc_left_btn"
         android:onClick="prevPage"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_page_num"
         app:layout_constraintEnd_toStartOf="@+id/tv_page_num"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_page_num"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tv_page_num"
         style="@style/ShadowedText"
         android:layout_width="45dp"
         android:layout_height="45dp"
+        android:layout_marginBottom="2dp"
+        android:layout_marginTop="2dp"
         android:gravity="center"
         android:text="1"
-        android:layout_marginTop="2dp"
-        android:layout_marginBottom="2dp"
-        app:layout_constraintTop_toBottomOf="@id/rv_movie_posters"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ib_next_page"
         app:layout_constraintStart_toEndOf="@+id/ib_prev_page"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/rv_movie_posters" />
 
     <ImageButton
         android:id="@+id/ib_next_page"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:background="@drawable/btn_next"
-        android:onClick="nextPage"
         android:contentDescription="@string/img_desc_right_btn"
+        android:onClick="nextPage"
+        app:layout_constraintBottom_toBottomOf="@id/tv_page_num"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_page_num"
-        app:layout_constraintBottom_toBottomOf="@id/tv_page_num"/>
+        app:layout_constraintStart_toEndOf="@+id/tv_page_num" />
     />
 
     <android.support.constraint.Group
         android:id="@+id/page_group"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:constraint_referenced_ids="ib_prev_page, tv_page_num, ib_next_page"
-        />
+        app:constraint_referenced_ids="ib_prev_page, tv_page_num, ib_next_page" />
 </android.support.constraint.ConstraintLayout>
