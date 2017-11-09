@@ -252,3 +252,48 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         }
     }
 }
+
+/*
+        return new AsyncTaskLoader<Cursor>(this) {
+
+                    @Override
+                    protected void onStartLoading() {
+                        pb_loading_data.setVisibility(View.VISIBLE);
+                        forceLoad();
+                    }
+
+                    @Override
+                    public Cursor loadInBackground() {
+
+                        URL url = null;
+                        try {
+                            String URLString = args.getString(getString(R.string.query_url_key));
+                            url = new URL(URLString);
+                        } catch (MalformedURLException e) {
+                            e.printStackTrace();
+                        }
+                        String json_data;
+                        List<MoviePoster> posters = null;
+                        try {
+                            json_data = NetworkUtils.getResponseFromHttpUrl(url);
+                            Log.i(TAG, json_data);
+                            posters = JSONUtils.getPosterDataFromJson(json_data);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (posters != null){
+                            for (MoviePoster poster : posters) {
+                                poster.saveToCurrent(MainActivity.this);
+                            }
+                        }
+
+                    }
+
+                    @Override
+                    public void deliverResult(Cursor data) {
+                        super.deliverResult(data);
+                        pb_loading_data.setVisibility(View.INVISIBLE);
+                    }
+                };
+
+*/

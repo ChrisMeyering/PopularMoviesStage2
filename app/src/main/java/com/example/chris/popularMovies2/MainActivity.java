@@ -2,11 +2,12 @@ package com.example.chris.popularMovies2;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -25,13 +26,14 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.chris.popularMovies2.data.MoviesContract;
+import com.example.chris.popularMovies2.databinding.ActivityMainBinding;
+import com.example.chris.popularMovies2.databinding.AppBarMainBinding;
+import com.example.chris.popularMovies2.databinding.ContentMainBinding;
 import com.example.chris.popularMovies2.sync.MoviesSyncUtils;
 import com.example.chris.popularMovies2.utilities.MoviePoster;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
@@ -40,7 +42,6 @@ import com.example.chris.popularMovies2.utilities.Utility;
 import java.net.URL;
 import java.util.ArrayList;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
@@ -59,55 +60,46 @@ public class MainActivity extends AppCompatActivity
     private static final String SORT_UPCOMING = "upcoming";
     private static final String SORT_FAVORITES = "favorites";
     private static final String SORT_RECENT = "recent";
-    @BindView(R.id.rv_movie_posters)
-    RecyclerView rv_movies;
-    @BindView(R.id.tv_page_num)
-    TextView tv_page_num;
-    @BindView(R.id.pb_loading_posters)
-    ProgressBar pb_loading_data;
-    @BindView(R.id.tv_error_message)
-    TextView tv_error_message;
-    @BindView(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
-    @BindView(R.id.et_search_by_name)
-    EditText et_search_by_name;
-    private ArrayList<Integer> favorite_ids = new ArrayList<Integer>();
-    private int page_number = 1;
     private String sort_by = SORT_BY_RATING;
+
+    private ArrayList<Integer> favorite_ids = new ArrayList<>();
+    private int page_number = 1;
     private MovieAdapter movieAdapter;
     private NetworkUtils networkUtils = new NetworkUtils();
 
+    Parcelable layoutManagerSavedState;
+    private ActivityMainBinding mainBinding;
+    private AppBarMainBinding appBarBinding;
+    //private ContentMainBinding contentMainBinding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        this.getContentResolver().delete(MoviesContract.CurrentPageEntry.CONTENT_URI, null, null);
 
+        mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        appBarBinding = mainBinding.appBarMainLayout;
+        //contentMainBinding = mainBinding.appBarMainLayout.contentMainLayout;
         if (savedInstanceState != null) {
             sort_by = savedInstanceState.getString(getString(R.string.SORT_BY_KEY));
             page_number = savedInstanceState.getInt(getString(R.string.PAGE_NUMBER_KEY));
+            layoutManagerSavedState = savedInstanceState.getParcelable(getString(R.string.LAYOUT_MANAGER_KEY));
         }
         initView();
-        if (sort_by != SORT_FAVORITES) {
+        showError();
+        appBarBinding.etSearchByName.setText("HELLO2.5");
+        appBarBinding.contentMainLayout.pageGroup.setVisibility(View.VISIBLE);
+        if (!sort_by.equals(SORT_FAVORITES)) {
             makeSortedMovieSearch();
         } else {
             findViewById(R.id.page_group).setVisibility(View.GONE);
             queryFavorites();
         }
-        //MovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_default_url_ext), sort_by, null, page_number));
 
     }
 
-    private void setupSharedPreferences() {
-        // Get all of the values from shared preferences to set it up
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-    }
-
-    private void hideKeyboard() {
-        et_search_by_name.clearFocus();
-        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(this.INPUT_METHOD_SERVICE);
-        inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        this.getContentResolver().delete(MoviesContract.CurrentPageEntry.CONTENT_URI, null, null);
     }
 
     private void initView() {
@@ -121,43 +113,43 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar,
+                this, mainBinding.drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close) {
             @Override
             public void onDrawerStateChanged(int newState) {
                 super.onDrawerStateChanged(newState);
-                hideKeyboard();
+                mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
             }
         };
-        drawerLayout.addDrawerListener(toggle);
+        mainBinding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        mainBinding.navView.setNavigationItemSelectedListener(this);
         switch (sort_by) {
             case SORT_BY_RATING:
-                navigationView.getMenu().getItem(0).setChecked(true);
+                mainBinding.navView.getMenu().getItem(0).setChecked(true);
                 break;
             case SORT_BY_POPULARITY:
-                navigationView.getMenu().getItem(1).setChecked(true);
+                mainBinding.navView.getMenu().getItem(1).setChecked(true);
                 break;
             case SORT_NOW_PLAYING:
-                navigationView.getMenu().getItem(2).setChecked(true);
+                mainBinding.navView.getMenu().getItem(2).setChecked(true);
                 break;
             case SORT_UPCOMING:
-                navigationView.getMenu().getItem(3).setChecked(true);
+                mainBinding.navView.getMenu().getItem(3).setChecked(true);
                 break;
             default:
-                navigationView.getMenu().getItem(4).setChecked(true);
+                mainBinding.navView.getMenu().getItem(4).setChecked(true);
                 break;
 
         }
-        et_search_by_name.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        mainBinding.appBarMainLayout.etSearchByName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String search = et_search_by_name.getText().toString();
+                    String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
                     if (search.trim().length() > 0) {
                         sort_by = "";
                         page_number = 1;
@@ -165,7 +157,8 @@ public class MainActivity extends AppCompatActivity
                         makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, page_number));
                         findViewById(R.id.page_group).setVisibility(View.VISIBLE);
                     }
-                    hideKeyboard();
+                    mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                    Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
                     return true;
                 }
                 return false;
@@ -173,20 +166,26 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void initRecyclerView() {
-        rv_movies.setHasFixedSize(true);
-        rv_movies.setItemViewCacheSize(30);
-        rv_movies.setDrawingCacheEnabled(true);
-        rv_movies.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setHasFixedSize(true);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setItemViewCacheSize(30);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setDrawingCacheEnabled(true);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, Utility.numOfGridColumns(this));
-        rv_movies.setLayoutManager(layoutManager);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setLayoutManager(layoutManager);
         layoutManager.setAutoMeasureEnabled(true);
+        /*
+        if (layoutManagerSavedState != null) {
+            mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
+        }*/
         movieAdapter = new MovieAdapter(this, this);
-        rv_movies.setAdapter(movieAdapter);
-        rv_movies.setOnTouchListener(new RecyclerView.OnTouchListener() {
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setAdapter(movieAdapter);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setOnTouchListener(new RecyclerView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                hideKeyboard();
+                mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
                 return false;
             }
         });
@@ -194,7 +193,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void updatePageNumberTV() {
-        tv_page_num.setText(String.valueOf(page_number));
+        mainBinding.appBarMainLayout.contentMainLayout.tvPageNum.setText(String.valueOf(page_number));
     }
 
     private void makeMovieQuery(URL url) {
@@ -227,8 +226,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        hideKeyboard();
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -246,13 +246,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        hideKeyboard();
+        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Toast.makeText(this, "TODO: Create settings fragment!", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_search:
-                String search = et_search_by_name.getText().toString();
+                String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
                 if (search.trim().length() == 0) {
                     Toast.makeText(this, "Please enter a movie name.", Toast.LENGTH_SHORT).show();
                     return super.onOptionsItemSelected(item);
@@ -261,7 +262,7 @@ public class MainActivity extends AppCompatActivity
                 sort_by = "";
                 updatePageNumberTV();
                 makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, page_number));
-                et_search_by_name.clearComposingText();
+                mainBinding.appBarMainLayout.etSearchByName.clearComposingText();
                 findViewById(R.id.page_group).setVisibility(View.VISIBLE);
                 return true;
             default:
@@ -273,23 +274,22 @@ public class MainActivity extends AppCompatActivity
     private void makeSortedMovieSearch() {
         page_number = 1;
         updatePageNumberTV();
-        rv_movies.getLayoutManager().scrollToPosition(0);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
         makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_default_url_ext), sort_by, null, page_number));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        drawerLayout.closeDrawer(GravityCompat.START);
-
-        String search = et_search_by_name.getText().toString();
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        mainBinding.drawerLayout.closeDrawer(GravityCompat.START);
+        String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
         if (search.trim().length() != 0) {
-            et_search_by_name.setText("");
+            mainBinding.appBarMainLayout.etSearchByName.setText("");
         }
         int itemId = item.getItemId();
-        if (sort_by == SORT_FAVORITES && itemId != R.id.action_view_favorites)
+        if (sort_by.equals(SORT_FAVORITES) && itemId != R.id.action_view_favorites)
             findViewById(R.id.page_group).setVisibility(View.VISIBLE);
-        else if (sort_by != SORT_FAVORITES && itemId == R.id.action_view_favorites)
+        else if (!sort_by.equals(SORT_FAVORITES) && itemId == R.id.action_view_favorites)
             findViewById(R.id.page_group).setVisibility(View.GONE);
         switch (itemId) {
             case R.id.action_sort_pop:
@@ -320,10 +320,8 @@ public class MainActivity extends AppCompatActivity
                 if (!sort_by.equals(SORT_FAVORITES)) {
                     sort_by = SORT_FAVORITES;
                     queryFavorites();
-
                 }
                 break;
-
         }
         return true;
     }
@@ -336,7 +334,8 @@ public class MainActivity extends AppCompatActivity
         outState.putString(getString(R.string.SORT_BY_KEY), sort_state);
         int current_page = page_number;
         outState.putInt(getString(R.string.PAGE_NUMBER_KEY), current_page);
-
+        outState.putParcelable(getString(R.string.LAYOUT_MANAGER_KEY),
+                mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().onSaveInstanceState());
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -376,51 +375,6 @@ public class MainActivity extends AppCompatActivity
                 null,
                 null,
                 sortOrder);
-
-/*
-        return new AsyncTaskLoader<Cursor>(this) {
-
-                    @Override
-                    protected void onStartLoading() {
-                        pb_loading_data.setVisibility(View.VISIBLE);
-                        forceLoad();
-                    }
-
-                    @Override
-                    public Cursor loadInBackground() {
-
-                        URL url = null;
-                        try {
-                            String URLString = args.getString(getString(R.string.query_url_key));
-                            url = new URL(URLString);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
-                        String json_data;
-                        List<MoviePoster> posters = null;
-                        try {
-                            json_data = NetworkUtils.getResponseFromHttpUrl(url);
-                            Log.i(TAG, json_data);
-                            posters = JSONUtils.getPosterDataFromJson(json_data);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (posters != null){
-                            for (MoviePoster poster : posters) {
-                                poster.saveToCurrent(MainActivity.this);
-                            }
-                        }
-
-                    }
-
-                    @Override
-                    public void deliverResult(Cursor data) {
-                        super.deliverResult(data);
-                        pb_loading_data.setVisibility(View.INVISIBLE);
-                    }
-                };
-
-*/
     }
 
     @Override
@@ -434,24 +388,21 @@ public class MainActivity extends AppCompatActivity
                     for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                         favorite_ids.add(data.getInt(0));
                     }
-                    Log.i(TAG, "updated favorite ids");
                     movieAdapter.updateFavorites(favorite_ids);
-                    if (sort_by != SORT_FAVORITES) {
+                    if (!sort_by.equals(SORT_FAVORITES)) {
                         return;
                     }
                     break;
                 case RECENT_MOVIE_LOADER_ID:
                     break;
             }
-            Log.i(TAG, "load finished. Number of items in cursor = " + data.getCount());
+            Log.i(TAG, "On load finished");
             showMoviePosters();
             movieAdapter.swapCursor(data);
-
-            //setMoviePosters(posters);
         } else {
             showError();
         }
-        pb_loading_data.setVisibility(View.INVISIBLE);
+        mainBinding.appBarMainLayout.contentMainLayout.pbLoadingPosters.setVisibility(View.INVISIBLE);
 
 
     }
@@ -462,30 +413,28 @@ public class MainActivity extends AppCompatActivity
 
 
     private void showMoviePosters() {
-        rv_movies.setVisibility(View.VISIBLE);
-        tv_error_message.setVisibility(View.INVISIBLE);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setVisibility(View.VISIBLE);
+        mainBinding.appBarMainLayout.contentMainLayout.tvErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     private void showError() {
-        rv_movies.setVisibility(View.INVISIBLE);
-        tv_error_message.setVisibility(View.VISIBLE);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setVisibility(View.INVISIBLE);
+        mainBinding.appBarMainLayout.contentMainLayout.tvErrorMessage.setVisibility(View.VISIBLE);
     }
 
 
     public void nextPage(View view) {
         page_number++;
         updatePageNumberTV();
-        rv_movies.getLayoutManager().scrollToPosition(0);
+        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
         makeMovieQuery(networkUtils.buildPageURL(page_number));
-
-
     }
 
     public void prevPage(View view) {
         if (page_number > 1) {
             page_number--;
             updatePageNumberTV();
-            rv_movies.getLayoutManager().scrollToPosition(0);
+            mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
             makeMovieQuery(networkUtils.buildPageURL(page_number));
         }
     }
@@ -500,7 +449,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view, MoviePoster movie) {
-        hideKeyboard();
+        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
         int id = view.getId();
         switch (id) {
             case R.id.iv_poster:

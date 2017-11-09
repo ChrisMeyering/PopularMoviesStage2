@@ -2,6 +2,7 @@ package com.example.chris.popularMovies2;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 
+import com.example.chris.popularMovies2.databinding.MovieListItemBinding;
 import com.example.chris.popularMovies2.utilities.MoviePoster;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
 import com.example.chris.popularMovies2.utilities.Utility;
@@ -56,24 +58,25 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
         moviePosters.moveToPosition(position);
         String poster_path = moviePosters.getString(1);
         int movie_ID = moviePosters.getInt(0);
+        Log.i(TAG, "Movie id = " + movie_ID);
         if (isFavorite(movie_ID)) {
-            holder.ib_favorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
+            holder.binding.ibFavorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
         } else {
-            holder.ib_favorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
+            holder.binding.ibFavorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
         }
-        holder.pb_loading_poster.setVisibility(View.VISIBLE);
+        holder.binding.pbLoadingPoster.setVisibility(View.VISIBLE);
         Picasso.with(context)
                 .load(NetworkUtils.buildPosterURL(poster_path, Utility.getMaxGridCellWidth(context)))
                 .placeholder(R.drawable.poster_placeholder)
                 .error(R.drawable.error)
-                .into(holder.iv_poster, new Callback() {
+                .into(holder.binding.ivPoster, new Callback() {
                     @Override
                     public void onSuccess() {
-                        holder.pb_loading_poster.setVisibility(View.INVISIBLE);
+                        holder.binding.pbLoadingPoster.setVisibility(View.INVISIBLE);
                     }
                     @Override
                     public void onError() {
-                        holder.pb_loading_poster.setVisibility(View.INVISIBLE);
+                        holder.binding.pbLoadingPoster.setVisibility(View.INVISIBLE);
                     }
                 });
         //moviePosters.get(position).setPoster_image(holder.iv_poster);
@@ -94,16 +97,12 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
     }
 
     public class PosterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
-        private final ImageView iv_poster;
-        private final ProgressBar pb_loading_poster;
-        private final ImageButton ib_favorite;
+        private MovieListItemBinding binding;
         public PosterViewHolder(View view) {
             super(view);
-            iv_poster = view.findViewById(R.id.iv_poster);
-            pb_loading_poster = view.findViewById(R.id.pb_loading_poster);
-            ib_favorite = view.findViewById(R.id.ib_favorite);
-            iv_poster.setOnClickListener(this);
-            ib_favorite.setOnClickListener(this);
+            binding = DataBindingUtil.bind(view);
+            binding.ivPoster.setOnClickListener(this);
+            binding.ibFavorite.setOnClickListener(this);
 
         }
 
@@ -113,9 +112,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.PosterViewHo
             moviePosters.moveToPosition(getAdapterPosition());
             if (view.getId() == R.id.ib_favorite) {
                 if (isFavorite(moviePosters.getInt(0)))
-                    ib_favorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
+                    binding.ibFavorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
                 else
-                    ib_favorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
+                    binding.ibFavorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
             }
             MoviePoster poster = new MoviePoster(moviePosters.getInt(0),moviePosters.getString(1));
             Log.i(TAG, "Movieid = " + poster.getId());

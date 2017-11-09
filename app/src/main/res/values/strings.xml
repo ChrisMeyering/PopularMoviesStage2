@@ -55,4 +55,5 @@
     <string name="movie_reviews">Reviews:</string>
     <string name="view_trailer">View Trailer</string>
     <string name="youtube_player_error">Error initializing YouTube player: %s</string>
+    <string name="LAYOUT_MANAGER_KEY">layout_manager_key</string>
 </resources>
