@@ -78,17 +78,24 @@ public class MainActivity extends AppCompatActivity
         mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         appBarBinding = mainBinding.appBarMainLayout;
         contentMainBinding = mainBinding.appBarMainLayout.contentMainLayout;
+        String search = null;
         if (savedInstanceState != null) {
             sortBy = savedInstanceState.getString(getString(R.string.SORT_BY_KEY));
             pageNumber = savedInstanceState.getInt(getString(R.string.PAGE_NUMBER_KEY));
+            search = savedInstanceState.getString(getString(R.string.MOVIE_SEARCH_QUERY_KEY));
             layoutManagerSavedState = savedInstanceState.getParcelable(getString(R.string.LAYOUT_MANAGER_KEY));
-
         }
         initView();
         showError();
-        if (!sortBy.equals(SORT_FAVORITES)) {
+        Log.i(TAG, "Search = " + search + " | SortBy = " + sortBy);
+        if (search != null && search.trim().length() > 0) {
+            Log.i(TAG, "Search by name");
+            makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, pageNumber));
+        }else if (!sortBy.equals(SORT_FAVORITES)) {
+            Log.i(TAG, "Query sort order");
             makeSortedMovieSearch();
         } else {
+            Log.i(TAG, "Query favorites");
             findViewById(R.id.page_group).setVisibility(View.GONE);
             queryFavorites();
         }
@@ -292,6 +299,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_sort_pop:
                 if (!sortBy.equals(SORT_BY_POPULARITY)) {
                     sortBy = SORT_BY_POPULARITY;
+                    contentMainBinding.rvMoviePosters.scrollToPosition(0);
                     pageNumber = 1;
                     updatePageNumberTV();
                     makeSortedMovieSearch();
@@ -300,6 +308,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_sort_rating:
                 if (!sortBy.equals(SORT_BY_RATING)) {
                     sortBy = SORT_BY_RATING;
+                    contentMainBinding.rvMoviePosters.scrollToPosition(0);
                     pageNumber = 1;
                     updatePageNumberTV();
                     makeSortedMovieSearch();
@@ -308,6 +317,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_now_playing:
                 if (!sortBy.equals(SORT_NOW_PLAYING)) {
                     sortBy = SORT_NOW_PLAYING;
+                    contentMainBinding.rvMoviePosters.scrollToPosition(0);
                     pageNumber = 1;
                     updatePageNumberTV();
                     makeSortedMovieSearch();
@@ -316,6 +326,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_upcoming:
                 if (!sortBy.equals(SORT_UPCOMING)) {
                     sortBy = SORT_UPCOMING;
+                    contentMainBinding.rvMoviePosters.scrollToPosition(0);
                     pageNumber = 1;
                     updatePageNumberTV();
                     makeSortedMovieSearch();
@@ -324,6 +335,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.action_view_favorites:
                 if (!sortBy.equals(SORT_FAVORITES)) {
                     sortBy = SORT_FAVORITES;
+                    contentMainBinding.rvMoviePosters.scrollToPosition(0);
                     queryFavorites();
                 }
                 break;
@@ -335,7 +347,7 @@ public class MainActivity extends AppCompatActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString(getString(R.string.SORT_BY_KEY), sortBy);
-
+        outState.putString(getString(R.string.MOVIE_SEARCH_QUERY_KEY), appBarBinding.etSearchByName.getText().toString());
         outState.putInt(getString(R.string.PAGE_NUMBER_KEY), pageNumber);
         outState.putParcelable(getString(R.string.LAYOUT_MANAGER_KEY),
                 contentMainBinding.rvMoviePosters.getLayoutManager().onSaveInstanceState());
