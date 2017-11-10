@@ -40,44 +40,43 @@ public class JSONUtils {
     public static MovieInfo getMovieDataFromJson(String MovieJSONString) throws JSONException {
         MovieInfo movie = new MovieInfo();
         JSONObject movieData = new JSONObject(MovieJSONString);
-        movie.setVote_count(movieData.getInt(MOV_VOTE_COUNT));
+        movie.setVoteCount(movieData.getInt(MOV_VOTE_COUNT));
         movie.setId(movieData.getInt(MOV_ID));
         movie.setVideo(movieData.getBoolean(MOV_VIDEO));
-        movie.setVote_average(movieData.getDouble(MOV_VOTE_AVG));
+        movie.setVoteAverage(movieData.getDouble(MOV_VOTE_AVG));
         movie.setTitle(movieData.getString(MOV_TITLE));
         movie.setPopularity(movieData.getLong(MOV_POPULARITY));
-        movie.setPoster_path(movieData.getString(MOV_POSTER));
-        movie.setOriginal_language(movieData.getString(MOV_ORIG_LANG));
-        movie.setOriginal_title(movieData.getString(MOV_ORIG_TITLE));
-        JSONArray JSON_Genres = movieData.getJSONArray(MOV_GENRES);
-        if (JSON_Genres != null) {
-            String[] genre_names = new String[JSON_Genres.length()];
-            for (int j = 0; j < JSON_Genres.length(); j++) {
-                JSONObject genres = JSON_Genres.getJSONObject(j);
-                genre_names[j] = genres.getString("name");
+        movie.setPosterPath(movieData.getString(MOV_POSTER));
+        movie.setOriginalLanguage(movieData.getString(MOV_ORIG_LANG));
+        movie.setOriginalTitle(movieData.getString(MOV_ORIG_TITLE));
+        JSONArray JSONGenres = movieData.getJSONArray(MOV_GENRES);
+        if (JSONGenres != null) {
+            String[] genreNames = new String[JSONGenres.length()];
+            for (int j = 0; j < JSONGenres.length(); j++) {
+                JSONObject genres = JSONGenres.getJSONObject(j);
+                genreNames[j] = genres.getString("name");
             }
-            movie.setGenre_names(genre_names);
+            movie.setGenreNames(genreNames);
         }
-        movie.setBackdrop_path(movieData.getString(MOV_BACKDROP_PATH));
+        movie.setBackdropPath(movieData.getString(MOV_BACKDROP_PATH));
         movie.setAdult(movieData.getBoolean(MOV_ADULT));
         movie.setOverview(movieData.getString(MOV_OVERVIEW));
-        movie.setRelease_date(movieData.getString(MOV_REL_DATE));
-        JSONArray JSON_Videos = movieData.getJSONObject(MOV_VIDEOS).getJSONArray(RESULTS);
-        if (JSON_Videos != null) {
-            String[] video_keys = new String[JSON_Videos.length()];
-            for (int i = 0; i < JSON_Videos.length(); i++) {
-                JSONObject video_info = JSON_Videos.getJSONObject(i);
-                video_keys[i] = video_info.getString(VID_KEY);
+        movie.setReleaseDate(movieData.getString(MOV_REL_DATE));
+        JSONArray JSONVideos = movieData.getJSONObject(MOV_VIDEOS).getJSONArray(RESULTS);
+        if (JSONVideos != null) {
+            String[] videoKeys = new String[JSONVideos.length()];
+            for (int i = 0; i < JSONVideos.length(); i++) {
+                JSONObject videoInfo = JSONVideos.getJSONObject(i);
+                videoKeys[i] = videoInfo.getString(VID_KEY);
             }
-            movie.setTrailers(video_keys);
+            movie.setTrailers(videoKeys);
         }
-        JSONArray JSON_Reviews = movieData.getJSONObject(MOV_REVIEWS).getJSONArray(RESULTS);
-        if (JSON_Reviews != null && JSON_Reviews.length() > 0) {
-            MovieReview[] movieReviews = new MovieReview[JSON_Reviews.length()];
-            for (int i = 0; i < JSON_Reviews.length(); i++) {
-                JSONObject movie_review = JSON_Reviews.getJSONObject(i);
-                Log.i("JSONUITLS", movie_review.toString());
-                movieReviews[i] = new MovieReview(movie_review.getString(REV_AUTHOR), movie_review.getString(REV_REVIEW));
+        JSONArray JSONReviews = movieData.getJSONObject(MOV_REVIEWS).getJSONArray(RESULTS);
+        if (JSONReviews != null && JSONReviews.length() > 0) {
+            MovieReview[] movieReviews = new MovieReview[JSONReviews.length()];
+            for (int i = 0; i < JSONReviews.length(); i++) {
+                JSONObject movieReview = JSONReviews.getJSONObject(i);
+                movieReviews[i] = new MovieReview(movieReview.getString(REV_AUTHOR), movieReview.getString(REV_REVIEW));
             }
             movie.setReviews(movieReviews);
         }

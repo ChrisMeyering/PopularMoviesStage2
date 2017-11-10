@@ -26,16 +26,21 @@ public class MoviePoster implements Parcelable {
         }
     };
     private final int id;
-    private final String poster_path;
+    private final String posterPath;
+    ImageView posterImage;
 
-    public MoviePoster(int id, String poster_path) {
+    public MoviePoster(int id, String posterPath) {
         this.id = id;
-        this.poster_path = poster_path;
+        this.posterPath = posterPath;
     }
 
     protected MoviePoster(Parcel in) {
         id = in.readInt();
-        poster_path = in.readString();
+        posterPath = in.readString();
+    }
+
+    public void setPosterImage(ImageView image) {
+        posterImage = image;
     }
 
     public int getId() {
@@ -44,7 +49,7 @@ public class MoviePoster implements Parcelable {
 
     public void saveToFavorites(Context context) {
         ContentValues posterValues = new ContentValues();
-        posterValues.put(MoviesContract.FavoritesEntry.COLUMN_POSTER_PATH, poster_path);
+        posterValues.put(MoviesContract.FavoritesEntry.COLUMN_POSTER_PATH, posterPath);
         posterValues.put(MoviesContract.FavoritesEntry.COLUMN_MOVIE_ID, id);
         context.getContentResolver().insert(MoviesContract.FavoritesEntry.CONTENT_URI, posterValues);
     }
@@ -58,21 +63,21 @@ public class MoviePoster implements Parcelable {
 
     public void saveToRecents(Context context) {
         ContentValues posterValues = new ContentValues();
-        posterValues.put(MoviesContract.RecentEntry.COLUMN_POSTER_PATH, poster_path);
+        posterValues.put(MoviesContract.RecentEntry.COLUMN_POSTER_PATH, posterPath);
         posterValues.put(MoviesContract.RecentEntry.COLUMN_MOVIE_ID, id);
         context.getContentResolver().insert(MoviesContract.RecentEntry.CONTENT_URI, posterValues);
     }
 
     public void saveToCurrent(Context context) {
         ContentValues posterValues = new ContentValues();
-        posterValues.put(MoviesContract.CurrentPageEntry.COLUMN_POSTER_PATH, poster_path);
+        posterValues.put(MoviesContract.CurrentPageEntry.COLUMN_POSTER_PATH, posterPath);
         posterValues.put(MoviesContract.CurrentPageEntry.COLUMN_MOVIE_ID, id);
         context.getContentResolver().insert(MoviesContract.CurrentPageEntry.CONTENT_URI, posterValues);
 
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    public String getPosterPath() {
+        return posterPath;
     }
 
     @Override
@@ -83,7 +88,7 @@ public class MoviePoster implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(id);
-        dest.writeString(poster_path);
+        dest.writeString(posterPath);
     }
 
 }

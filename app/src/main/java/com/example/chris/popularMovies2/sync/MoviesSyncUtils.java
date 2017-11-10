@@ -17,7 +17,6 @@ public class MoviesSyncUtils {
     private static final String TAG = MoviesSyncUtils.class.getSimpleName();
 
     public static void startImmediateSync(@NonNull final Context context, URL url) {
-        Log.i(TAG, "Starting immediate Sync");
         Intent intent = new Intent(context, MoviesSyncIntentService.class);
         intent.putExtra(context.getString(R.string.query_url_key), url.toString());
         context.startService(intent);

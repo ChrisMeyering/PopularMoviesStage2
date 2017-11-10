@@ -1,87 +1,91 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/main_activity_background_wg"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.chris.popularMovies2.MainActivity"
-    tools:showIn="@layout/app_bar_main">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_movie_posters"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_page_num"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/main_activity_background_wg"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.example.chris.popularMovies2.MainActivity"
+        tools:showIn="@layout/app_bar_main">
 
 
-    <TextView
-        android:id="@+id/tv_error_message"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/error_msg"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/pb_loading_posters"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_movie_posters"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_page_num"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
 
-    <ImageButton
-        android:id="@+id/ib_prev_page"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:background="@drawable/btn_prev"
-        android:contentDescription="@string/img_desc_left_btn"
-        android:onClick="prevPage"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_page_num"
-        app:layout_constraintEnd_toStartOf="@+id/tv_page_num"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="parent" />
+        <TextView
+            android:id="@+id/tv_error_message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/error_msg"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/tv_page_num"
-        style="@style/ShadowedText"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginTop="2dp"
-        android:gravity="center"
-        android:text="1"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/ib_next_page"
-        app:layout_constraintStart_toEndOf="@+id/ib_prev_page"
-        app:layout_constraintTop_toBottomOf="@id/rv_movie_posters" />
+        <ProgressBar
+            android:id="@+id/pb_loading_posters"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/ib_next_page"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:background="@drawable/btn_next"
-        android:contentDescription="@string/img_desc_right_btn"
-        android:onClick="nextPage"
-        app:layout_constraintBottom_toBottomOf="@id/tv_page_num"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_page_num" />
 
-    <android.support.constraint.Group
-        android:id="@+id/page_group"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:constraint_referenced_ids="ib_prev_page, tv_page_num, ib_next_page" />
-</android.support.constraint.ConstraintLayout>
+        <ImageButton
+            android:id="@+id/ib_prev_page"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_prev"
+            android:contentDescription="@string/img_desc_left_btn"
+            android:onClick="prevPage"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_page_num"
+            app:layout_constraintEnd_toStartOf="@+id/tv_page_num"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_page_num"
+            style="@style/ShadowedText"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginTop="2dp"
+            android:gravity="center"
+            android:text="1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/ib_next_page"
+            app:layout_constraintStart_toEndOf="@+id/ib_prev_page"
+            app:layout_constraintTop_toBottomOf="@id/rv_movie_posters" />
+
+        <ImageButton
+            android:id="@+id/ib_next_page"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:background="@drawable/btn_next"
+            android:contentDescription="@string/img_desc_right_btn"
+            android:onClick="nextPage"
+            app:layout_constraintBottom_toBottomOf="@id/tv_page_num"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_page_num" />
+        />
+
+        <android.support.constraint.Group
+            android:id="@+id/page_group"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:constraint_referenced_ids="ib_prev_page, tv_page_num, ib_next_page" />
+    </android.support.constraint.ConstraintLayout>
+</layout>

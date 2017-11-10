@@ -1,7 +1,6 @@
 package com.example.chris.popularMovies2;
 
 import android.content.ActivityNotFoundException;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -13,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -22,12 +22,14 @@ import com.example.chris.popularMovies2.databinding.ActivityMovieDetailBinding;
 import com.example.chris.popularMovies2.utilities.JSONUtils;
 import com.example.chris.popularMovies2.utilities.MovieInfo;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
+import com.example.chris.popularMovies2.utilities.ReviewAdapter;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
+import java.util.Arrays;
 
 
 public class MovieDetailActivity extends YouTubeBaseActivity
@@ -39,8 +41,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     private int movieID;
     private ReviewAdapter reviewAdapter;
     private ActivityMovieDetailBinding movieDetailBinding;
-
-
+    private int currentTrailer= 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +52,24 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         movieDetailBinding = DataBindingUtil.setContentView(this, R.layout.activity_movie_detail);
 
         initRecyclerView();
-        Intent start_intent = getIntent();
+        Intent startIntent = getIntent();
         if (savedInstanceState != null) {
             movieInfo = savedInstanceState.getParcelable(getString(R.string.MOVIE_INFO_KEY));
+            final int[] position = savedInstanceState.getIntArray(getString(R.string.SCROLL_VIEW_POSITION_KEY));
+            if (position != null && position.length == 2) {
+                movieDetailBinding.svParent.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        movieDetailBinding.svParent.scrollTo(position[0], position[1]);
+                    }
+                });
+            }
             bindMovieInfo();
-            Log.i(TAG, "Restoring data from savedinstancestate");
         } else if (movieInfo != null) {
             bindMovieInfo();
-        } else if (start_intent != null) {
-            if (start_intent.hasExtra("movieID")) {
-                movieID = start_intent.getIntExtra("movieID", -1);
-                Log.i(TAG, "making movie query");
+        } else if (startIntent != null) {
+            if (startIntent.hasExtra("movieID")) {
+                movieID = startIntent.getIntExtra(getString(R.string.MOVIE_ID_KEY), -1);
                 makeMovieQuery();
             }
         } else {
@@ -72,6 +80,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
     private void initRecyclerView() {
         movieDetailBinding.reviewsLayout.rvReviews.setDrawingCacheEnabled(true);
+        movieDetailBinding.reviewsLayout.rvReviews.setFocusable(false);
         movieDetailBinding.reviewsLayout.rvReviews.setNestedScrollingEnabled(false);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         movieDetailBinding.reviewsLayout.rvReviews.setLayoutManager(layoutManager);
@@ -131,6 +140,9 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelable(getString(R.string.MOVIE_INFO_KEY), movieInfo);
+        outState.putIntArray(getString(R.string.SCROLL_VIEW_POSITION_KEY),
+                new int[] {movieDetailBinding.svParent.getScrollX(),
+                        movieDetailBinding.svParent.getScrollY()});
     }
 
     private void showImageProgressBars() {
@@ -140,19 +152,26 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
     protected void bindMovieInfo() {
         movieDetailBinding.tvMovieTitle.setText(movieInfo.getTitle());
-        movieDetailBinding.detailsLayout.tvReleaseDate.setText(movieInfo.getRelease_date());
-        movieDetailBinding.detailsLayout.tvGenres.setText(movieInfo.getGenre_names());
-        movieDetailBinding.detailsLayout.tvRating.setText(String.valueOf(movieInfo.getVote_average()) + "/10");
+        movieDetailBinding.detailsLayout.tvReleaseDate.setText(movieInfo.getReleaseDate());
+        movieDetailBinding.detailsLayout.tvGenres.setText(movieInfo.getGenreNames());
+        movieDetailBinding.detailsLayout.tvRating.setText(String.valueOf(movieInfo.getVoteAverage()) + "/10");
         movieDetailBinding.synopsisLayout.tvMovieInfo.setText(movieInfo.getOverview());
         reviewAdapter.updateData(movieInfo.getReviews());
         if (reviewAdapter.getItemCount() > 0) {
             movieDetailBinding.reviewsGroup.setVisibility(View.VISIBLE);
         }
-        movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+        String [] trailers = movieInfo.getTrailers();
+        if (trailers!= null && trailers.length > 0) {
+            movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+            movieDetailBinding.youtubePlayer.setFocusable(true);
+        }else {
+            movieDetailBinding.youtubePlayer.setVisibility(View.GONE);
+            Toast.makeText(this, "No trailers avaliable", Toast.LENGTH_LONG).show();
+        }
         showMovieInfo();
         showImageProgressBars();
         Picasso.with(getBaseContext())
-                .load(NetworkUtils.buildPosterURL(movieInfo.getPoster_path(), movieDetailBinding.detailsLayout.ivMoviePoster.getWidth()))
+                .load(NetworkUtils.buildPosterURL(movieInfo.getPosterPath(), movieDetailBinding.detailsLayout.ivMoviePoster.getWidth()))
                 .placeholder(R.drawable.poster_placeholder)
                 .error(R.drawable.error)
                 .into(movieDetailBinding.detailsLayout.ivMoviePoster, new com.squareup.picasso.Callback() {
@@ -167,7 +186,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
                     }
                 });
         Picasso.with(getBaseContext()).
-                load(NetworkUtils.buildBackdropURL(movieInfo.getBackdrop_path(), movieDetailBinding.ivBackdrop.getWidth()))
+                load(NetworkUtils.buildBackdropURL(movieInfo.getBackdropPath(), movieDetailBinding.ivBackdrop.getWidth()))
                 .placeholder(R.drawable.backdrop_placeholder)
                 .error(R.drawable.error)
                 .into(movieDetailBinding.ivBackdrop, new com.squareup.picasso.Callback() {
@@ -181,12 +200,16 @@ public class MovieDetailActivity extends YouTubeBaseActivity
                         movieDetailBinding.pbLoadingBackdrop.setVisibility(View.INVISIBLE);
                     }
                 });
+
     }
 
     @Override
     public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
         if (!b) {
-            youTubePlayer.cueVideo(movieInfo.getTrailers()[0]);
+            String[] trailers = movieInfo.getTrailers();
+            Toast.makeText(this, "Loading " + trailers.length + " trailers.", Toast.LENGTH_LONG).show();
+            //Videos cued: can navigate through playlist by using left and right arrows in video player
+            youTubePlayer.cueVideos(Arrays.asList(trailers), currentTrailer, 0);
         }
     }
 
@@ -198,11 +221,10 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     }
 
     public void watchTrailer(View view) {
-        String trailerKey = "";
-
+        String trailerKey;
         if (movieInfo.getTrailers() != null && movieInfo.getTrailers().length > 0) {
 
-            trailerKey = movieInfo.getTrailers()[0];
+            trailerKey = movieInfo.getTrailers()[currentTrailer];
             Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
             try {
                 startActivity(appIntent);
@@ -216,7 +238,6 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     }
 
     private class MovieQueryTask extends AsyncTask<URL, Void, MovieInfo> {
-
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -226,12 +247,11 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         @Override
         protected MovieInfo doInBackground(URL... urls) {
             URL url = urls[0];
-            String json_data;
+            String jsonData;
             MovieInfo movie = null;
             try {
-                json_data = NetworkUtils.getResponseFromHttpUrl(url);
-                Log.i(TAG, "json response = " + json_data);
-                movie = JSONUtils.getMovieDataFromJson(json_data);
+                jsonData = NetworkUtils.getResponseFromHttpUrl(url);
+                movie = JSONUtils.getMovieDataFromJson(jsonData);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -240,7 +260,6 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
         @Override
         protected void onPostExecute(final MovieInfo movie) {
-            final Context context = getBaseContext();
             if (movie != null) {
                 movieInfo = movie;
                 bindMovieInfo();
@@ -252,48 +271,3 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         }
     }
 }
-
-/*
-        return new AsyncTaskLoader<Cursor>(this) {
-
-                    @Override
-                    protected void onStartLoading() {
-                        pb_loading_data.setVisibility(View.VISIBLE);
-                        forceLoad();
-                    }
-
-                    @Override
-                    public Cursor loadInBackground() {
-
-                        URL url = null;
-                        try {
-                            String URLString = args.getString(getString(R.string.query_url_key));
-                            url = new URL(URLString);
-                        } catch (MalformedURLException e) {
-                            e.printStackTrace();
-                        }
-                        String json_data;
-                        List<MoviePoster> posters = null;
-                        try {
-                            json_data = NetworkUtils.getResponseFromHttpUrl(url);
-                            Log.i(TAG, json_data);
-                            posters = JSONUtils.getPosterDataFromJson(json_data);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        if (posters != null){
-                            for (MoviePoster poster : posters) {
-                                poster.saveToCurrent(MainActivity.this);
-                            }
-                        }
-
-                    }
-
-                    @Override
-                    public void deliverResult(Cursor data) {
-                        super.deliverResult(data);
-                        pb_loading_data.setVisibility(View.INVISIBLE);
-                    }
-                };
-
-*/

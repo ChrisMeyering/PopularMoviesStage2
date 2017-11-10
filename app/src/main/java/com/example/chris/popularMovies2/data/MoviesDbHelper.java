@@ -3,7 +3,6 @@ package com.example.chris.popularMovies2.data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.example.chris.popularMovies2.data.MoviesContract.*;
 /**
@@ -17,12 +16,10 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     public MoviesDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        Log.i(TAG, "DB constructor");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        Log.i(TAG, "onCreate");
         final String SQL_CREATE_FAVORITES_TABLE =
                 "CREATE TABLE " + FavoritesEntry.TABLE_NAME + " ("
                         + FavoritesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
@@ -47,7 +44,6 @@ public class MoviesDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.i(TAG, "onUpgrade");
         db.execSQL("DROP TABLE IF EXISTS " + FavoritesEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + RecentEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + CurrentPageEntry.TABLE_NAME);

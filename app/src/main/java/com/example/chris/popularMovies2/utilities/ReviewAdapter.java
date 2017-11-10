@@ -1,4 +1,4 @@
-package com.example.chris.popularMovies2;
+package com.example.chris.popularMovies2.utilities;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -7,7 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.chris.popularMovies2.utilities.MovieReview;
+import com.example.chris.popularMovies2.R;
 
 /**
  * Created by chris on 11/7/17.
@@ -30,8 +30,8 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     @Override
     public void onBindViewHolder(ReviewAdapter.ReviewViewHolder holder, int position) {
         MovieReview movieReview = reviews[position];
-        holder.tv_author.setText(movieReview.getAuthor());
-        holder.tv_review.setText(movieReview.getReview());
+        holder.tvAuthor.setText(movieReview.getAuthor());
+        holder.tvReview.setText(movieReview.getReview());
 
     }
 
@@ -47,13 +47,13 @@ public class ReviewAdapter extends RecyclerView.Adapter<ReviewAdapter.ReviewView
     }
 
     public class ReviewViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tv_author;
-        private final TextView tv_review;
+        private final TextView tvAuthor;
+        private final TextView tvReview;
 
         public ReviewViewHolder(View itemView) {
             super(itemView);
-            tv_author = itemView.findViewById(R.id.tv_review_author);
-            tv_review = itemView.findViewById(R.id.tv_review_contents);
+            tvAuthor = itemView.findViewById(R.id.tv_review_author);
+            tvReview = itemView.findViewById(R.id.tv_review_contents);
         }
     }
 }

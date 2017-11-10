@@ -39,7 +39,6 @@ public class MoviesProvider extends ContentProvider {
     }
     @Override
     public boolean onCreate() {
-        Log.i(TAG, "onCreate");
         mOpenHelper = new MoviesDbHelper(getContext());
         return true;
     }
@@ -212,7 +211,6 @@ public class MoviesProvider extends ContentProvider {
                 break;
             case CODE_FAVORITES_WITH_ID:
                 selectionArguments = new String[]{uri.getLastPathSegment()};
-                Log.i(TAG, "lastPathSegment = " + uri.getLastPathSegment());
                 numRowsDeleted = mOpenHelper.getWritableDatabase()
                         .delete(MoviesContract.FavoritesEntry.TABLE_NAME,
                                 MoviesContract.FavoritesEntry.COLUMN_MOVIE_ID + " = ?",

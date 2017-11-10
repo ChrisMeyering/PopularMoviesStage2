@@ -21,9 +21,7 @@ public class MoviesSyncIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(@Nullable Intent intent) {
-        Log.i(TAG, "onHandleIntent");
-        if (intent.hasExtra(getResources().getString(R.string.query_url_key)))
-            Log.i(TAG, "Starting sync task");
+        if (intent.hasExtra(getString(R.string.query_url_key)))
         MoviesSyncTask.syncMovies(this, intent.getStringExtra(getResources().getString(R.string.query_url_key)));
     }
 }

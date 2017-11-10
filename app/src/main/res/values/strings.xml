@@ -56,4 +56,6 @@
     <string name="view_trailer">View Trailer</string>
     <string name="youtube_player_error">Error initializing YouTube player: %s</string>
     <string name="LAYOUT_MANAGER_KEY">layout_manager_key</string>
+    <string name="MOVIE_ID_KEY">movieID</string>
+    <string name="SCROLL_VIEW_POSITION_KEY">scroll_view_position_key</string>
 </resources>

@@ -1,44 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.chris.popularMovies2.MainActivity">
-
-    <android.support.design.widget.AppBarLayout
+    xmlns:tools="http://schemas.android.com/tools">
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        android:layout_height="match_parent"
+        tools:context="com.example.chris.popularMovies2.MainActivity">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            android:focusable="true"
-            android:focusableInTouchMode="true"
-            app:popupTheme="@style/AppTheme.PopupOverlay">
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-            <EditText
-                android:id="@+id/et_search_by_name"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:focusedByDefault="false"
-                android:hint="@string/search"
-                android:imeOptions="actionDone"
-                android:inputType="textCapWords"
-                android:maxLines="1" />
-        </android.support.v7.widget.Toolbar>
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
-    </android.support.design.widget.AppBarLayout>
+                <EditText
+                    android:id="@+id/et_search_by_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:focusedByDefault="false"
+                    android:hint="@string/search"
+                    android:imeOptions="actionDone"
+                    android:inputType="textCapWords"
+                    android:maxLines="1" />
+            </android.support.v7.widget.Toolbar>
 
-    <include
-        android:id="@+id/content_main_layout"
-        layout="@layout/content_main"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        </android.support.design.widget.AppBarLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+        <include layout="@layout/content_main"
+            android:id="@+id/content_main_layout"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+</layout>

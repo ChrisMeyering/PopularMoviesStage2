@@ -54,47 +54,48 @@ public class NetworkUtils {
         try {
             url = new URL(movieUri.toString());
         } catch (MalformedURLException e) {
-            LogUtils.logError(TAG, e);
+            e.printStackTrace();
         }
         return url;
     }
 
     public static String buildBackdropURL(String path, int width) {
-        String IMG_SIZE = "w";
+        String imgSize = "w";
         if (width <= 10)
-            IMG_SIZE += "780";
+            imgSize += "780";
         else if (width <= 300)
-            IMG_SIZE += "300";
+            imgSize += "300";
         else if (width <= 780)
-            IMG_SIZE += "780";
+            imgSize += "780";
         else if (width <= 1280)
-            IMG_SIZE += "1280";
+            imgSize += "1280";
         else
-            IMG_SIZE = "original";
-        return TMDB_IMG_BASE_URL + IMG_SIZE + path;
+            imgSize = "original";
+        return TMDB_IMG_BASE_URL + imgSize + path;
     }
 
     public static String buildPosterURL(String path, int width) {
-        String IMG_SIZE = "w";
+        String imgSize = "w";
         if (width <= 10)
-            IMG_SIZE += "342";
+            imgSize += "342";
         else if (width <= 92)
-            IMG_SIZE += "92";
+            imgSize += "92";
         else if (width <= 154)
-            IMG_SIZE += "154";
+            imgSize += "154";
         else if (width <= 185)
-            IMG_SIZE += "185";
+            imgSize += "185";
         else if (width <= 342)
-            IMG_SIZE += "342";
+            imgSize += "342";
         else if (width <= 500)
-            IMG_SIZE += "500";
+            imgSize += "500";
         else if (width <= 780)
-            IMG_SIZE += "780";
+            imgSize += "780";
         else
-            IMG_SIZE = "original";
-        return TMDB_IMG_BASE_URL + IMG_SIZE + path;
+            imgSize = "original";
+        return TMDB_IMG_BASE_URL + imgSize + path;
     }
 
+    //TODO: use retrofit
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
@@ -114,13 +115,13 @@ public class NetworkUtils {
         previousQueryBuilder = null;
     }
 
-    public URL buildSearchURL(@NonNull String baseExtension, @Nullable String sort_by, @Nullable String movieName, int pageNumber) {
+    public URL buildSearchURL(@NonNull String baseExtension, @Nullable String sortBy, @Nullable String movieName, int pageNumber) {
         Uri.Builder uriBuilder = null;
         String base = TMDB_BASE_URL + baseExtension;
-        if ((movieName == null) == (sort_by == null)) {
+        if ((movieName == null) == (sortBy == null)) {
             throw new IllegalArgumentException("Unable to build requested URL");
-        } else if (sort_by != null) {
-            uriBuilder = Uri.parse(base + sort_by).buildUpon();
+        } else if (sortBy != null) {
+            uriBuilder = Uri.parse(base + sortBy).buildUpon();
         } else {
             uriBuilder = Uri.parse(base).buildUpon()
                     .appendQueryParameter(PARAM_QUERY, movieName);
@@ -138,16 +139,12 @@ public class NetworkUtils {
         try {
             url = new URL(builtUri.toString());
         } catch (MalformedURLException e) {
-            LogUtils.logError(TAG, e);
+            e.printStackTrace();
         }
         return url;
     }
 
 
-    /*
-    private static final String TMDB_DEFAULT_EXTENSION = "movie/";
-    private static final String TMDB_NAME_SEARCH_EXTENSION = "search/movie";
-    */
 
 
 }

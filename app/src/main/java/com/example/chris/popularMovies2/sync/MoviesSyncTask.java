@@ -26,24 +26,16 @@ public class MoviesSyncTask {
         try {
             URL movieRequestURL = new URL(urlString);
             String jsonQueryResponse = NetworkUtils.getResponseFromHttpUrl(movieRequestURL);
-            Log.i(TAG + " -- JSON", jsonQueryResponse);
             ContentValues[] posterValues = JSONUtils.getPosterContentValuesFromJSON(context, jsonQueryResponse);
 
             if (posterValues != null && posterValues.length != 0) {
-                Log.i(TAG, "Saving " + posterValues.length + " new posters");
                 ContentResolver contentResolver = context.getContentResolver();
                 contentResolver.delete(MoviesContract.CurrentPageEntry.CONTENT_URI, null, null);
                 contentResolver.bulkInsert(MoviesContract.CurrentPageEntry.CONTENT_URI, posterValues);
             }
-        } catch (MalformedURLException e) {
-            Log.i(TAG + " -- URL", "Unable to build url " + urlString);
+        } catch (Exception e) {
             e.printStackTrace();
 
-        } catch (IOException e) {
-            Log.i(TAG + " -- QUERY", "Unable to query url " + urlString);
-            e.printStackTrace();
-        } catch (JSONException e) {
-            Log.i(TAG + " -- JSON", "Error creating contentValues");
         }
     }
 }

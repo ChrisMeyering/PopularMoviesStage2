@@ -19,20 +19,20 @@ public class MovieInfo implements Parcelable {
             return new MovieInfo[size];
         }
     };
-    private int vote_count = -1;
+    private int voteCount = -1;
     private int id = -1;
     private boolean video = false;
-    private double vote_average = -1;
+    private double voteAverage = -1;
     private String title = "Title not found";
     private long popularity = 0;
-    private String poster_path = null;
-    private String original_language = "Original language unknown";
-    private String original_title = "Original title not provided";
-    private String[] genre_names;
-    private String backdrop_path = "Backdrop path undefined";
+    private String posterPath = null;
+    private String originalLanguage = "Original language unknown";
+    private String originalTitle = "Original title not provided";
+    private String[] genreNames;
+    private String backdropPath = "Backdrop path undefined";
     private boolean adult = false;
     private String overview = "No description provided.";
-    private String release_date = "yyyy-mm-dd";
+    private String releaseDate = "yyyy-mm-dd";
     private MovieReview[] reviews = null;
     private String[] trailers;
 
@@ -40,32 +40,32 @@ public class MovieInfo implements Parcelable {
     }
 
     protected MovieInfo(Parcel in) {
-        vote_count = in.readInt();
+        voteCount = in.readInt();
         id = in.readInt();
         video = in.readByte() != 0;
-        vote_average = in.readDouble();
+        voteAverage = in.readDouble();
         title = in.readString();
         popularity = in.readLong();
-        poster_path = in.readString();
-        original_language = in.readString();
-        original_title = in.readString();
-        genre_names = in.createStringArray();
-        backdrop_path = in.readString();
+        posterPath = in.readString();
+        originalLanguage = in.readString();
+        originalTitle = in.readString();
+        genreNames = in.createStringArray();
+        backdropPath = in.readString();
         adult = in.readByte() != 0;
         overview = in.readString();
-        release_date = in.readString();
+        releaseDate = in.readString();
     }
 
     void setVideo(boolean video) {
         this.video = video;
     }
 
-    public int getVote_count() {
-        return vote_count;
+    public int getVoteCount() {
+        return voteCount;
     }
 
-    void setVote_count(int vote_count) {
-        this.vote_count = vote_count;
+    void setVoteCount(int voteCount) {
+        this.voteCount = voteCount;
     }
 
     public int getId() {
@@ -80,12 +80,12 @@ public class MovieInfo implements Parcelable {
         return video;
     }
 
-    public double getVote_average() {
-        return vote_average;
+    public double getVoteAverage() {
+        return voteAverage;
     }
 
-    void setVote_average(double vote_average) {
-        this.vote_average = vote_average;
+    void setVoteAverage(double voteAverage) {
+        this.voteAverage = voteAverage;
     }
 
     public String getTitle() {
@@ -104,35 +104,35 @@ public class MovieInfo implements Parcelable {
         this.popularity = popularity;
     }
 
-    public String getPoster_path() {
-        return poster_path;
+    public String getPosterPath() {
+        return posterPath;
     }
 
-    void setPoster_path(String poster_path) {
-        this.poster_path = poster_path;
+    void setPosterPath(String posterPath) {
+        this.posterPath = posterPath;
     }
 
-    public String getOriginal_language() {
-        return original_language;
+    public String getOriginalLanguage() {
+        return originalLanguage;
     }
 
-    void setOriginal_language(String original_language) {
-        this.original_language = original_language;
+    void setOriginalLanguage(String originalLanguage) {
+        this.originalLanguage = originalLanguage;
     }
 
-    public String getOriginal_title() {
-        return original_title;
+    public String getOriginalTitle() {
+        return originalTitle;
     }
 
-    void setOriginal_title(String original_title) {
-        this.original_title = original_title;
+    void setOriginalTitle(String originalTitle) {
+        this.originalTitle = originalTitle;
     }
 
-    public String getGenre_names() {
+    public String getGenreNames() {
         String result = "";
-        for (String s : genre_names) {
+        for (String s : genreNames) {
             result += s;
-            if (s == genre_names[genre_names.length - 1])
+            if (s == genreNames[genreNames.length - 1])
                 result += ".";
             else
                 result += ", ";
@@ -140,16 +140,16 @@ public class MovieInfo implements Parcelable {
         return result;
     }
 
-    void setGenre_names(String[] genre_names) {
-        this.genre_names = genre_names;
+    void setGenreNames(String[] genreNames) {
+        this.genreNames = genreNames;
     }
 
-    public String getBackdrop_path() {
-        return backdrop_path;
+    public String getBackdropPath() {
+        return backdropPath;
     }
 
-    void setBackdrop_path(String backdrop_path) {
-        this.backdrop_path = backdrop_path;
+    void setBackdropPath(String backdropPath) {
+        this.backdropPath = backdropPath;
     }
 
     public boolean isAdult() {
@@ -168,30 +168,30 @@ public class MovieInfo implements Parcelable {
         this.overview = overview;
     }
 
-    public String getRelease_date() {
-        return release_date;
+    public String getReleaseDate() {
+        return releaseDate;
     }
 
-    void setRelease_date(String release_date) {
-        this.release_date = release_date;
+    void setReleaseDate(String releaseDate) {
+        this.releaseDate = releaseDate;
     }
 
     public String getInfo() {
         return "id : " + String.valueOf(id) +
                 "\ntitle : " + title +
-                "\nvote_average : " + String.valueOf(vote_average) +
+                "\nvoteAverage : " + String.valueOf(voteAverage) +
                 "\npopularity : " + String.valueOf(popularity) +
-                "\nposter path : " + poster_path +
+                "\nposter path : " + posterPath +
                 "\ndescription : " + overview +
-                "\nrelease date : " + release_date;
+                "\nrelease date : " + releaseDate;
     }
 
     public String[] getTrailers() {
         return trailers;
     }
 
-    void setTrailers(String[] trailer_keys) {
-        this.trailers = trailer_keys;
+    void setTrailers(String[] trailerKeys) {
+        this.trailers = trailerKeys;
     }
 
     public MovieReview[] getReviews() {
@@ -209,19 +209,19 @@ public class MovieInfo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeInt(vote_count);
+        parcel.writeInt(voteCount);
         parcel.writeInt(id);
         parcel.writeByte((byte) (video ? 1 : 0));
-        parcel.writeDouble(vote_average);
+        parcel.writeDouble(voteAverage);
         parcel.writeString(title);
         parcel.writeLong(popularity);
-        parcel.writeString(poster_path);
-        parcel.writeString(original_language);
-        parcel.writeString(original_title);
-        parcel.writeStringArray(genre_names);
-        parcel.writeString(backdrop_path);
+        parcel.writeString(posterPath);
+        parcel.writeString(originalLanguage);
+        parcel.writeString(originalTitle);
+        parcel.writeStringArray(genreNames);
+        parcel.writeString(backdropPath);
         parcel.writeByte((byte) (adult ? 1 : 0));
         parcel.writeString(overview);
-        parcel.writeString(release_date);
+        parcel.writeString(releaseDate);
     }
 }
