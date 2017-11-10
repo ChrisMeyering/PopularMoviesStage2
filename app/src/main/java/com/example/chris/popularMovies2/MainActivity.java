@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.support.constraint.Group;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
@@ -27,6 +28,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import com.example.chris.popularMovies2.utilities.Utility;
 import java.net.URL;
 import java.util.ArrayList;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity
@@ -68,16 +71,23 @@ public class MainActivity extends AppCompatActivity
     private NetworkUtils networkUtils = new NetworkUtils();
 
     Parcelable layoutManagerSavedState;
-    private ActivityMainBinding mainBinding;
-    private AppBarMainBinding appBarBinding;
-    //private ContentMainBinding contentMainBinding;
+
+    @BindView(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @BindView(R.id.et_search_by_name) EditText etSearchByName;
+    @BindView(R.id.nav_view) NavigationView navView;
+    @BindView(R.id.pb_loading_posters) ProgressBar pbLoadingPosters;
+    @BindView(R.id.page_group) Group pageGroup;
+    @BindView(R.id.rv_movie_posters) RecyclerView rvMoviePosters;
+    @BindView(R.id.tv_page_num) TextView tvPageNum;
+    @BindView(R.id.tv_error_message) TextView tvErrorMessage;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
-        appBarBinding = mainBinding.appBarMainLayout;
-        //contentMainBinding = mainBinding.appBarMainLayout.contentMainLayout;
+        setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         if (savedInstanceState != null) {
             sort_by = savedInstanceState.getString(getString(R.string.SORT_BY_KEY));
             page_number = savedInstanceState.getInt(getString(R.string.PAGE_NUMBER_KEY));
@@ -85,8 +95,7 @@ public class MainActivity extends AppCompatActivity
         }
         initView();
         showError();
-        appBarBinding.etSearchByName.setText("HELLO2.5");
-        appBarBinding.contentMainLayout.pageGroup.setVisibility(View.VISIBLE);
+        pageGroup.setVisibility(View.VISIBLE);
         if (!sort_by.equals(SORT_FAVORITES)) {
             makeSortedMovieSearch();
         } else {
@@ -113,43 +122,43 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, mainBinding.drawerLayout, toolbar,
+                this, drawerLayout, toolbar,
                 R.string.navigation_drawer_open,
                 R.string.navigation_drawer_close) {
             @Override
             public void onDrawerStateChanged(int newState) {
                 super.onDrawerStateChanged(newState);
-                mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                etSearchByName.clearFocus();
                 Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
             }
         };
-        mainBinding.drawerLayout.addDrawerListener(toggle);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        mainBinding.navView.setNavigationItemSelectedListener(this);
+        navView.setNavigationItemSelectedListener(this);
         switch (sort_by) {
             case SORT_BY_RATING:
-                mainBinding.navView.getMenu().getItem(0).setChecked(true);
+                navView.getMenu().getItem(0).setChecked(true);
                 break;
             case SORT_BY_POPULARITY:
-                mainBinding.navView.getMenu().getItem(1).setChecked(true);
+                navView.getMenu().getItem(1).setChecked(true);
                 break;
             case SORT_NOW_PLAYING:
-                mainBinding.navView.getMenu().getItem(2).setChecked(true);
+                navView.getMenu().getItem(2).setChecked(true);
                 break;
             case SORT_UPCOMING:
-                mainBinding.navView.getMenu().getItem(3).setChecked(true);
+                navView.getMenu().getItem(3).setChecked(true);
                 break;
             default:
-                mainBinding.navView.getMenu().getItem(4).setChecked(true);
+                navView.getMenu().getItem(4).setChecked(true);
                 break;
 
         }
-        mainBinding.appBarMainLayout.etSearchByName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+        etSearchByName.setOnEditorActionListener(new EditText.OnEditorActionListener() {
 
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
+                    String search = etSearchByName.getText().toString();
                     if (search.trim().length() > 0) {
                         sort_by = "";
                         page_number = 1;
@@ -157,7 +166,7 @@ public class MainActivity extends AppCompatActivity
                         makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, page_number));
                         findViewById(R.id.page_group).setVisibility(View.VISIBLE);
                     }
-                    mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                    etSearchByName.clearFocus();
                     Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
                     return true;
                 }
@@ -168,23 +177,24 @@ public class MainActivity extends AppCompatActivity
 
     @SuppressLint("ClickableViewAccessibility")
     private void initRecyclerView() {
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setHasFixedSize(true);
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setItemViewCacheSize(30);
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setDrawingCacheEnabled(true);
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        rvMoviePosters.setHasFixedSize(true);
+        rvMoviePosters.setItemViewCacheSize(30);
+        rvMoviePosters.setDrawingCacheEnabled(true);
+        rvMoviePosters.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
+        movieAdapter = new MovieAdapter(this, this);
+        rvMoviePosters.setAdapter(movieAdapter);
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(this, Utility.numOfGridColumns(this));
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setLayoutManager(layoutManager);
+        rvMoviePosters.setLayoutManager(layoutManager);
         layoutManager.setAutoMeasureEnabled(true);
         /*
         if (layoutManagerSavedState != null) {
             mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().onRestoreInstanceState(layoutManagerSavedState);
         }*/
-        movieAdapter = new MovieAdapter(this, this);
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setAdapter(movieAdapter);
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setOnTouchListener(new RecyclerView.OnTouchListener() {
+        rvMoviePosters.setOnTouchListener(new RecyclerView.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+                etSearchByName.clearFocus();
                 Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
                 return false;
             }
@@ -193,7 +203,7 @@ public class MainActivity extends AppCompatActivity
 
 
     private void updatePageNumberTV() {
-        mainBinding.appBarMainLayout.contentMainLayout.tvPageNum.setText(String.valueOf(page_number));
+        tvPageNum.setText(String.valueOf(page_number));
     }
 
     private void makeMovieQuery(URL url) {
@@ -226,7 +236,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        etSearchByName.clearFocus();
         Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -246,14 +256,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        etSearchByName.clearFocus();
         Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
         switch (item.getItemId()) {
             case R.id.action_settings:
                 Toast.makeText(this, "TODO: Create settings fragment!", Toast.LENGTH_LONG).show();
                 return true;
             case R.id.action_search:
-                String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
+                String search = etSearchByName.getText().toString();
                 if (search.trim().length() == 0) {
                     Toast.makeText(this, "Please enter a movie name.", Toast.LENGTH_SHORT).show();
                     return super.onOptionsItemSelected(item);
@@ -262,7 +272,7 @@ public class MainActivity extends AppCompatActivity
                 sort_by = "";
                 updatePageNumberTV();
                 makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_search_url_ext), null, search, page_number));
-                mainBinding.appBarMainLayout.etSearchByName.clearComposingText();
+                etSearchByName.clearComposingText();
                 findViewById(R.id.page_group).setVisibility(View.VISIBLE);
                 return true;
             default:
@@ -274,17 +284,17 @@ public class MainActivity extends AppCompatActivity
     private void makeSortedMovieSearch() {
         page_number = 1;
         updatePageNumberTV();
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
+        rvMoviePosters.getLayoutManager().scrollToPosition(0);
         makeMovieQuery(networkUtils.buildSearchURL(getString(R.string.TMDB_default_url_ext), sort_by, null, page_number));
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        mainBinding.drawerLayout.closeDrawer(GravityCompat.START);
-        String search = mainBinding.appBarMainLayout.etSearchByName.getText().toString();
+        drawerLayout.closeDrawer(GravityCompat.START);
+        String search = etSearchByName.getText().toString();
         if (search.trim().length() != 0) {
-            mainBinding.appBarMainLayout.etSearchByName.setText("");
+            etSearchByName.setText("");
         }
         int itemId = item.getItemId();
         if (sort_by.equals(SORT_FAVORITES) && itemId != R.id.action_view_favorites)
@@ -334,8 +344,7 @@ public class MainActivity extends AppCompatActivity
         outState.putString(getString(R.string.SORT_BY_KEY), sort_state);
         int current_page = page_number;
         outState.putInt(getString(R.string.PAGE_NUMBER_KEY), current_page);
-        outState.putParcelable(getString(R.string.LAYOUT_MANAGER_KEY),
-                mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().onSaveInstanceState());
+        outState.putParcelable(getString(R.string.LAYOUT_MANAGER_KEY), rvMoviePosters.getLayoutManager().onSaveInstanceState());
     }
 
     @SuppressLint("StaticFieldLeak")
@@ -402,7 +411,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             showError();
         }
-        mainBinding.appBarMainLayout.contentMainLayout.pbLoadingPosters.setVisibility(View.INVISIBLE);
+        pbLoadingPosters.setVisibility(View.INVISIBLE);
 
 
     }
@@ -413,20 +422,20 @@ public class MainActivity extends AppCompatActivity
 
 
     private void showMoviePosters() {
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setVisibility(View.VISIBLE);
-        mainBinding.appBarMainLayout.contentMainLayout.tvErrorMessage.setVisibility(View.INVISIBLE);
+        rvMoviePosters.setVisibility(View.VISIBLE);
+        tvErrorMessage.setVisibility(View.INVISIBLE);
     }
 
     private void showError() {
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.setVisibility(View.INVISIBLE);
-        mainBinding.appBarMainLayout.contentMainLayout.tvErrorMessage.setVisibility(View.VISIBLE);
+        rvMoviePosters.setVisibility(View.INVISIBLE);
+        tvErrorMessage.setVisibility(View.VISIBLE);
     }
 
 
     public void nextPage(View view) {
         page_number++;
         updatePageNumberTV();
-        mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
+        rvMoviePosters.getLayoutManager().scrollToPosition(0);
         makeMovieQuery(networkUtils.buildPageURL(page_number));
     }
 
@@ -434,7 +443,7 @@ public class MainActivity extends AppCompatActivity
         if (page_number > 1) {
             page_number--;
             updatePageNumberTV();
-            mainBinding.appBarMainLayout.contentMainLayout.rvMoviePosters.getLayoutManager().scrollToPosition(0);
+            rvMoviePosters.getLayoutManager().scrollToPosition(0);
             makeMovieQuery(networkUtils.buildPageURL(page_number));
         }
     }
@@ -449,7 +458,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onClick(View view, MoviePoster movie) {
-        mainBinding.appBarMainLayout.etSearchByName.clearFocus();
+        etSearchByName.clearFocus();
         Utility.hideKeyboard(MainActivity.this, getCurrentFocus().getWindowToken());
         int id = view.getId();
         switch (id) {

@@ -27,7 +27,6 @@ public class MoviePoster implements Parcelable {
     };
     private final int id;
     private final String poster_path;
-    ImageView poster_image;
 
     public MoviePoster(int id, String poster_path) {
         this.id = id;
@@ -37,10 +36,6 @@ public class MoviePoster implements Parcelable {
     protected MoviePoster(Parcel in) {
         id = in.readInt();
         poster_path = in.readString();
-    }
-
-    public void setPoster_image(ImageView image) {
-        poster_image = image;
     }
 
     public int getId() {
