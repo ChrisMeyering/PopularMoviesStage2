@@ -9,7 +9,9 @@ import android.os.Bundle;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -95,12 +97,14 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
         movieDetailBinding.rvTrailers.setHasFixedSize(true);
         movieDetailBinding.rvTrailers.setNestedScrollingEnabled(true);
-        RecyclerView.LayoutManager trailerLayoutManager =
+        final RecyclerView.LayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         movieDetailBinding.rvTrailers.setLayoutManager(trailerLayoutManager);
         trailerLayoutManager.setAutoMeasureEnabled(true);
         trailerAdapter =  new TrailerAdapter(this, this);
         movieDetailBinding.rvTrailers.setAdapter(trailerAdapter);
+        SnapHelper helper = new LinearSnapHelper();
+        helper.attachToRecyclerView(movieDetailBinding.rvTrailers);
     }
 
 

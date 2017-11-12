@@ -35,6 +35,8 @@ public class TrailerAdapter extends RecyclerView.Adapter<TrailerAdapter.TrailerV
         return new TrailerViewHolder(view);
     }
 
+
+
     @Override
     public void onBindViewHolder(TrailerViewHolder holder, int position) {
         holder.bind();
