@@ -22,6 +22,8 @@ public class NetworkUtils {
 
 
     private static final String YOUTUBE_API_KEY = BuildConfig.YOUTUBE_API_KEY;
+    private static final String YOUTUBE_IMG_BASE_URL = "http://img.youtube.com/vi/";
+
     private static final String YOUTUBE_BASE_URL = "https://www.youtube.com/watch";
     private static final String PARAM_YOUTUBE_QUERY_KEY = "v";
 
@@ -95,6 +97,11 @@ public class NetworkUtils {
         return TMDB_IMG_BASE_URL + imgSize + path;
     }
 
+    public static String buildYoutubeImageURL(String trailerId) {
+        return YOUTUBE_IMG_BASE_URL + trailerId + "/0.jpg";
+    }
+
+
     //TODO: use retrofit
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -143,8 +150,6 @@ public class NetworkUtils {
         }
         return url;
     }
-
-
 
 
 }

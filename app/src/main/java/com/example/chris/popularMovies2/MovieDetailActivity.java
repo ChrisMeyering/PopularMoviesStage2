@@ -23,6 +23,7 @@ import com.example.chris.popularMovies2.utilities.JSONUtils;
 import com.example.chris.popularMovies2.utilities.MovieInfo;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
 import com.example.chris.popularMovies2.utilities.ReviewAdapter;
+import com.example.chris.popularMovies2.utilities.TrailerAdapter;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
@@ -34,14 +35,15 @@ import java.util.Arrays;
 
 public class MovieDetailActivity extends YouTubeBaseActivity
         implements LoaderManager.LoaderCallbacks<MovieInfo>,
-        YouTubePlayer.OnInitializedListener {
+        YouTubePlayer.OnInitializedListener, TrailerAdapter.TrailerAdapterClickHandler {
 
     String TAG = MovieDetailActivity.class.getSimpleName();
     MovieInfo movieInfo = null;
     private int movieID;
     private ReviewAdapter reviewAdapter;
+    private TrailerAdapter trailerAdapter;
     private ActivityMovieDetailBinding movieDetailBinding;
-    private int currentTrailer= 0;
+    private String currentTrailerKey;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,12 +84,25 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         movieDetailBinding.reviewsLayout.rvReviews.setDrawingCacheEnabled(true);
         movieDetailBinding.reviewsLayout.rvReviews.setFocusable(false);
         movieDetailBinding.reviewsLayout.rvReviews.setNestedScrollingEnabled(false);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        movieDetailBinding.reviewsLayout.rvReviews.setLayoutManager(layoutManager);
-        layoutManager.setAutoMeasureEnabled(true);
+        RecyclerView.LayoutManager reviewLayoutManager = new LinearLayoutManager(this);
+        movieDetailBinding.reviewsLayout.rvReviews.setLayoutManager(reviewLayoutManager);
+        reviewLayoutManager.setAutoMeasureEnabled(true);
         reviewAdapter = new ReviewAdapter(this);
         movieDetailBinding.reviewsLayout.rvReviews.setAdapter(reviewAdapter);
+
+
+
+
+        movieDetailBinding.rvTrailers.setHasFixedSize(true);
+        movieDetailBinding.rvTrailers.setNestedScrollingEnabled(true);
+        RecyclerView.LayoutManager trailerLayoutManager =
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        movieDetailBinding.rvTrailers.setLayoutManager(trailerLayoutManager);
+        trailerLayoutManager.setAutoMeasureEnabled(true);
+        trailerAdapter =  new TrailerAdapter(this, this);
+        movieDetailBinding.rvTrailers.setAdapter(trailerAdapter);
     }
+
 
     private void makeMovieQuery() {
         URL url = NetworkUtils.buildMovieURL(movieID);
@@ -162,12 +177,15 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         }
         String [] trailers = movieInfo.getTrailers();
         if (trailers!= null && trailers.length > 0) {
-            movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
-            movieDetailBinding.youtubePlayer.setFocusable(true);
-        }else {
-            movieDetailBinding.youtubePlayer.setVisibility(View.GONE);
-            Toast.makeText(this, "No trailers avaliable", Toast.LENGTH_LONG).show();
+            Log.i(TAG, "number of trailers = " + trailers.length);
+            trailerAdapter.setData(trailers);
         }
+        //    movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+        //    movieDetailBinding.youtubePlayer.setFocusable(true);
+        //}else {
+        //    movieDetailBinding.youtubePlayer.setVisibility(View.GONE);
+        //    Toast.makeText(this, "No trailers avaliable", Toast.LENGTH_LONG).show();
+        //}
         showMovieInfo();
         showImageProgressBars();
         Picasso.with(getBaseContext())
@@ -204,12 +222,80 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     }
 
     @Override
-    public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+    public void onInitializationSuccess(YouTubePlayer.Provider provider, final YouTubePlayer youTubePlayer, boolean b) {
         if (!b) {
-            String[] trailers = movieInfo.getTrailers();
-            Toast.makeText(this, "Loading " + trailers.length + " trailers.", Toast.LENGTH_LONG).show();
-            //Videos cued: can navigate through playlist by using left and right arrows in video player
-            youTubePlayer.cueVideos(Arrays.asList(trailers), currentTrailer, 0);
+            movieDetailBinding.youtubePlayer.setVisibility(View.VISIBLE);
+            youTubePlayer.cueVideo(currentTrailerKey);
+
+            youTubePlayer.setPlayerStateChangeListener(new YouTubePlayer.PlayerStateChangeListener() {
+                @Override
+                public void onLoading() {
+
+                }
+
+                @Override
+                public void onLoaded(String s) {
+                    youTubePlayer.play();
+                }
+
+                @Override
+                public void onAdStarted() {
+
+                }
+
+                @Override
+                public void onVideoStarted() {
+                    youTubePlayer.setPlaybackEventListener(new YouTubePlayer.PlaybackEventListener() {
+                        @Override
+                        public void onPlaying() {
+                            movieDetailBinding.ibCloseYoutubePlayer.setVisibility(View.GONE);
+                        }
+
+                        @Override
+                        public void onPaused() {
+                            movieDetailBinding.ibCloseYoutubePlayer.setVisibility(View.VISIBLE);
+                            movieDetailBinding.ibCloseYoutubePlayer.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    closePlayer();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onStopped() {
+                        }
+
+                        @Override
+                        public void onBuffering(boolean b) {
+
+                        }
+
+                        @Override
+                        public void onSeekTo(int i) {
+
+                        }
+                    });
+
+                }
+
+
+                @Override
+                public void onVideoEnded() {
+                    closePlayer();
+                }
+
+                @Override
+                public void onError(YouTubePlayer.ErrorReason errorReason) {
+
+                }
+
+                private void closePlayer() {
+                    movieDetailBinding.ibCloseYoutubePlayer.setVisibility(View.GONE);
+                    movieDetailBinding.youtubePlayer.setVisibility(View.GONE);
+                    youTubePlayer.release();
+                }
+            });
         }
     }
 
@@ -217,24 +303,32 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
         String error = String.format(getString(R.string.youtube_player_error), youTubeInitializationResult.toString());
         Toast.makeText(this, error, Toast.LENGTH_LONG).show();
-        movieDetailBinding.btnTrailer.setVisibility(View.VISIBLE);
+        watchTrailer();
     }
 
-    public void watchTrailer(View view) {
-        String trailerKey;
-        if (movieInfo.getTrailers() != null && movieInfo.getTrailers().length > 0) {
-
-            trailerKey = movieInfo.getTrailers()[currentTrailer];
-            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
-            try {
-                startActivity(appIntent);
-            } catch (ActivityNotFoundException ex) {
-                Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(trailerKey));
-                startActivity(webIntent);
-            }
-        } else {
-            Toast.makeText(this, "Error: Trailer not found.", Toast.LENGTH_LONG).show();
+    public void watchTrailer() {
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + currentTrailerKey));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(currentTrailerKey));
+            startActivity(webIntent);
         }
+    }
+
+    @Override
+    public void watchTrailer(String trailerKey) {
+        currentTrailerKey = trailerKey;
+        movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
+        /*
+        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
+        try {
+            startActivity(appIntent);
+        } catch (ActivityNotFoundException ex) {
+            Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(trailerKey));
+            startActivity(webIntent);
+        }
+        */
     }
 
     private class MovieQueryTask extends AsyncTask<URL, Void, MovieInfo> {

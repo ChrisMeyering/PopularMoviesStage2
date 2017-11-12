@@ -63,30 +63,39 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/details_layout" />
 
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_trailers"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintDimensionRatio="H,500:281"
+                app:layout_constraintTop_toBottomOf="@id/synopsis_layout"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+
             <com.google.android.youtube.player.YouTubePlayerView
                 android:id="@+id/youtube_player"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
+                android:visibility="gone"
                 android:background="@android:color/black"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/synopsis_layout" />
 
-
-            <Button
-                android:id="@+id/btn_trailer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:onClick="watchTrailer"
-                android:text="@string/view_trailer"
-                android:visibility="invisible"
-                app:layout_constraintBottom_toBottomOf="@id/youtube_player"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+            <ImageButton
+                android:id="@+id/ib_close_youtube_player"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_margin="4dp"
+                android:padding="1dp"
+                android:background="@null"
+                android:scaleType="centerInside"
+                android:src="@drawable/close_icon"
+                android:visibility="gone"
                 app:layout_constraintTop_toTopOf="@id/youtube_player"
-                app:layout_constraintVertical_bias="0.3" />
-
+                app:layout_constraintEnd_toEndOf="@id/youtube_player"/>
             <include
                 android:id="@+id/reviews_layout"
                 layout="@layout/reviews"
@@ -96,7 +105,7 @@
                 android:visibility="gone"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/youtube_player" />
+                app:layout_constraintTop_toBottomOf="@id/rv_trailers" />
 
             <android.support.constraint.Group
                 android:id="@+id/reviews_group"
