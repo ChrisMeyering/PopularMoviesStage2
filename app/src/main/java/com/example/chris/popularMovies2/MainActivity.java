@@ -476,6 +476,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.iv_poster:
                 Intent intent = new Intent(this, MovieDetailActivity.class);
                 intent.putExtra(getString(R.string.MOVIE_ID_KEY), movie.getId());
+                intent.putExtra(getString(R.string.IS_FAVORITE), isFavorite(movie.getId()));
                 startActivity(intent);
                 break;
             case R.id.ib_favorite:

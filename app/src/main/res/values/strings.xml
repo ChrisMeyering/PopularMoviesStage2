@@ -59,4 +59,5 @@
     <string name="MOVIE_ID_KEY">movieID</string>
     <string name="SCROLL_VIEW_POSITION_KEY">scroll_view_position_key</string>
     <string name="MOVIE_SEARCH_QUERY_KEY">movie_search_query_key</string>
+    <string name="IS_FAVORITE">isFavorite</string>
 </resources>

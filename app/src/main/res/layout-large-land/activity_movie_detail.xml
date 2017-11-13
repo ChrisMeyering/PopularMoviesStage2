@@ -43,6 +43,18 @@
                 app:layout_constraintTop_toTopOf="@+id/iv_backdrop"
                 app:layout_constraintVertical_bias="0.015" />
 
+
+            <ImageButton
+                android:id="@+id/ib_favorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/favorite_icon_selector"
+                android:elevation="4dp"
+                android:onClick="onClick"
+                android:layout_margin="4dp"
+                app:layout_constraintBottom_toBottomOf="@+id/details_layout"
+                app:layout_constraintEnd_toEndOf="@+id/details_layout" />
+
             <include
                 android:id="@+id/details_layout"
                 layout="@layout/details"

@@ -1,6 +1,5 @@
 package com.example.chris.popularMovies2;
 
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -14,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -26,13 +24,13 @@ import com.example.chris.popularMovies2.utilities.MovieInfo;
 import com.example.chris.popularMovies2.utilities.NetworkUtils;
 import com.example.chris.popularMovies2.utilities.ReviewAdapter;
 import com.example.chris.popularMovies2.utilities.TrailerAdapter;
+import com.example.chris.popularMovies2.utilities.Utility;
 import com.google.android.youtube.player.YouTubeBaseActivity;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.squareup.picasso.Picasso;
 
 import java.net.URL;
-import java.util.Arrays;
 
 
 public class MovieDetailActivity extends YouTubeBaseActivity
@@ -42,10 +40,12 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     String TAG = MovieDetailActivity.class.getSimpleName();
     MovieInfo movieInfo = null;
     private int movieID;
+    private boolean isFavorite;
     private ReviewAdapter reviewAdapter;
     private TrailerAdapter trailerAdapter;
     private ActivityMovieDetailBinding movieDetailBinding;
     private String currentTrailerKey;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +57,12 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
         initRecyclerView();
         Intent startIntent = getIntent();
+        if (startIntent != null) {
+            if (startIntent.hasExtra(getString(R.string.IS_FAVORITE)))
+                isFavorite = startIntent.getBooleanExtra(getString(R.string.IS_FAVORITE), false);
+
+        }
+
         if (savedInstanceState != null) {
             movieInfo = savedInstanceState.getParcelable(getString(R.string.MOVIE_INFO_KEY));
             final int[] position = savedInstanceState.getIntArray(getString(R.string.SCROLL_VIEW_POSITION_KEY));
@@ -96,6 +102,7 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
 
         movieDetailBinding.rvTrailers.setHasFixedSize(true);
+        movieDetailBinding.rvTrailers.setFocusable(false);
         movieDetailBinding.rvTrailers.setNestedScrollingEnabled(true);
         final RecyclerView.LayoutManager trailerLayoutManager =
                 new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -175,6 +182,11 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         movieDetailBinding.detailsLayout.tvGenres.setText(movieInfo.getGenreNames());
         movieDetailBinding.detailsLayout.tvRating.setText(String.valueOf(movieInfo.getVoteAverage()) + "/10");
         movieDetailBinding.synopsisLayout.tvMovieInfo.setText(movieInfo.getOverview());
+        if (isFavorite)
+            movieDetailBinding.ibFavorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
+        else
+            movieDetailBinding.ibFavorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
+
         reviewAdapter.updateData(movieInfo.getReviews());
         if (reviewAdapter.getItemCount() > 0) {
             movieDetailBinding.reviewsGroup.setVisibility(View.VISIBLE);
@@ -183,6 +195,8 @@ public class MovieDetailActivity extends YouTubeBaseActivity
         if (trailers!= null && trailers.length > 0) {
             Log.i(TAG, "number of trailers = " + trailers.length);
             trailerAdapter.setData(trailers);
+        } else {
+            movieDetailBinding.rvTrailers.setVisibility(View.GONE);
         }
         //    movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
         //    movieDetailBinding.youtubePlayer.setFocusable(true);
@@ -312,11 +326,13 @@ public class MovieDetailActivity extends YouTubeBaseActivity
 
     public void watchTrailer() {
         Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + currentTrailerKey));
-        try {
+        Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(currentTrailerKey));
+        if (appIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(currentTrailerKey));
+        } else if (webIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(webIntent);
+        } else {
+            Toast.makeText(this, "Unable to complete request", Toast.LENGTH_LONG);
         }
     }
 
@@ -324,15 +340,22 @@ public class MovieDetailActivity extends YouTubeBaseActivity
     public void watchTrailer(String trailerKey) {
         currentTrailerKey = trailerKey;
         movieDetailBinding.youtubePlayer.initialize(BuildConfig.YOUTUBE_API_KEY, this);
-        /*
-        Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailerKey));
-        try {
-            startActivity(appIntent);
-        } catch (ActivityNotFoundException ex) {
-            Intent webIntent = new Intent(Intent.ACTION_VIEW, NetworkUtils.buildYoutubeUri(trailerKey));
-            startActivity(webIntent);
+
+    }
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.ib_favorite:
+                if (isFavorite) {
+                    Utility.deleteFromFavorites(this, movieInfo.getId());
+                    movieDetailBinding.ibFavorite.setImageResource(R.drawable.ic_star_border_grey_600_24dp);
+                } else {
+                    Utility.saveToFavorites(this, movieInfo.getId(), movieInfo.getPosterPath());
+                    movieDetailBinding.ibFavorite.setImageResource(R.drawable.ic_star_orange_500_24dp);
+                }
+                isFavorite = !isFavorite;
+
         }
-        */
     }
 
     private class MovieQueryTask extends AsyncTask<URL, Void, MovieInfo> {

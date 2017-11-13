@@ -29,6 +29,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageButton
+                android:id="@+id/ib_favorite"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:background="@drawable/favorite_icon_selector"
+                android:elevation="4dp"
+                android:padding="2dp"
+                android:onClick="onClick"
+                android:layout_margin="12dp"
+                app:layout_constraintBottom_toBottomOf="@+id/details_layout"
+                app:layout_constraintEnd_toEndOf="@+id/details_layout" />
+
             <TextView
                 android:id="@+id/tv_movie_title"
                 style="@style/ShadowedText"
